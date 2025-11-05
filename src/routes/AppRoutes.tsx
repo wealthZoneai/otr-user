@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Landing from "../pages/Landing";
-import Home from "../pages/home";
+import Home from "../pages/Home";
 import RegistrationForm from "../pages/RegistrationSteps/RegistrationForm";
 
 const AppRoutes: React.FC = () => {
