@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import Stepper from "../Stepper";
-import PersonalDetails from "../RegistrationSteps/PersonalDetails";
-import ProfessionalDetails from "../RegistrationSteps/ProfessionalDetails";
-import AdditionalDetails from "../RegistrationSteps/AdditionalDetails";
-import UploadDocuments from "../RegistrationSteps/UploadDocuments";
-import Declaration from "../RegistrationSteps/Declaration";
+import Stepper from "./Stepper";
+import PersonalDetails from "./PersonalDetails";
+import ProfessionalDetails from "./ProfessionalDetails";
+import AdditionalDetails from "./AdditionalDetails";
+import UploadDocuments from "./UploadDocuments";
+import Declaration from "./Declaration";
 
 
 const RegistrationForm: React.FC = () => {
