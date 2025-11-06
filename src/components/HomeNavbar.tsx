@@ -1,5 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FaDownload,
+  FaHome,
+  FaBell,
+  FaRocket,
+  FaCalendarAlt,
+  FaUserCircle,
+} from "react-icons/fa";
 
 const HomeNavbar: React.FC = () => {
   const navigate = useNavigate();
@@ -10,19 +18,62 @@ const HomeNavbar: React.FC = () => {
   };
 
   return (
-    <nav className="w-full h-16 flex items-center justify-between px-10 bg-gray-900 text-white shadow-md">
-      <div className="text-xl font-bold">Benjour Dashboard</div>
+    <nav className="w-full h-16 flex items-center justify-between px-8 bg-gradient-to-r from-[#002366] to-[#00b8d9] shadow-md">
+      {/* LEFT SIDE — Logo & Admit Card */}
+      <div className="flex items-center gap-4">
+        <div className="text-white text-xl font-bold tracking-wide">LOGO</div>
 
-      <div className="flex items-center gap-6">
-        <a href="#" className="hover:text-yellow-300">Dashboard</a>
-        <a href="#" className="hover:text-yellow-300">Orders</a>
-        <a href="#" className="hover:text-yellow-300">Profile</a>
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 px-4 py-2 rounded-full hover:bg-red-600 transition"
-        >
-          Logout
+        <button className="flex items-center gap-2 bg-teal-300 text-black font-semibold px-4 py-1.5 rounded-md hover:bg-teal-400 transition duration-200">
+          <FaDownload className="text-black" />
+          Admit Card
         </button>
+      </div>
+
+      {/* RIGHT SIDE — Nav Links */}
+      <div className="flex items-center gap-8 text-white font-medium">
+        <a
+          href="#"
+          className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
+        >
+          <FaHome size={18} />
+          <span>Home</span>
+        </a>
+
+        <a
+          href="#"
+          className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
+        >
+          <FaBell size={18} />
+          <span>Notifications</span>
+        </a>
+
+        <a
+          href="#"
+          className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
+        >
+          <FaRocket size={18} />
+          <span>Tracking</span>
+        </a>
+
+        <a
+          href="#"
+          className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
+        >
+          <FaCalendarAlt size={18} />
+          <span>Upcoming Jobs</span>
+        </a>
+
+        {/* OTR Button */}
+        <button className="bg-gradient-to-r from-yellow-200 to-yellow-300 px-6 py-1.5 rounded-full font-bold text-[#0a0a23] hover:opacity-90 transition duration-200">
+          OTR
+        </button>
+
+        {/* Profile Icon */}
+        <FaUserCircle
+          size={30}
+          className="cursor-pointer hover:text-yellow-300 transition duration-200"
+          title="Profile"
+        />
       </div>
     </nav>
   );

@@ -1,24 +1,29 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "../pages/Landing";
 import Home from "../pages/Home";
 import RegistrationForm from "../pages/RegistrationSteps/RegistrationForm";
+import AppLayout from "../layouts/AppLayout";
+import NotificationsPage from "../pages/NotificationsPage";
+import UpcomingNotificationsPage from "../pages/UpcomingNotificationsPage";
 
 const AppRoutes: React.FC = () => {
-  const isAuthenticated = !!localStorage.getItem("token");
+  // Temporarily disable token check for testing
+  const isAuthenticated = true; // ✅ always true for now
 
   return (
     <BrowserRouter>
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Landing />} />
-        <Route path="/register" element={<RegistrationForm />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/upcoming-notifications" element={<UpcomingNotificationsPage />} />
 
-        {/* Protected route */}
-        <Route
-          path="/home"
-          element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
-        />
+        {/* Protected routes (now always accessible) */}
+        <Route element={<AppLayout />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/register" element={<RegistrationForm />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
