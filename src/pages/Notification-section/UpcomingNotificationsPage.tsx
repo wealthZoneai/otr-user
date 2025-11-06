@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import NotificationCard from "../components/NotificationCard";
+import NotificationCard from "../../components/NotificationCard";
 
 const UpcomingNotificationsPage: React.FC = () => {
   const navigate = useNavigate();

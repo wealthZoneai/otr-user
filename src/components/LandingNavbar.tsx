@@ -8,7 +8,7 @@ const Navbar: React.FC = () => {
 
   const handleLoginClick = () => {
     // ✅ For now, directly navigate to home (simulate login success)
-    navigate("/home");
+    navigate("/login");
   };
 
   return (
