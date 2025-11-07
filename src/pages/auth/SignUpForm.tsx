@@ -1,17 +1,205 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Phone,
+  User,
+} from "lucide-react";
 import { motion } from "framer-motion";
-import { HiOutlineMail, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeOff, HiOutlinePhone } from "react-icons/hi";
-import { FaUserGraduate } from "react-icons/fa";
-import { RiUserLine } from "react-icons/ri";
+import Illustration from "../../assets/login-vector-img.png";
+
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import {
+  registerUser,
+  sendEmailOtpApi,
+  verifyEmailOtpApi,
+  sendMobileOtpApi,
+  verifyMobileOtpApi,
+} from "../../services/apiHelpers";
 
-import Illustration from "../../assets/signup-vector-img.png"; 
+// ======================
+// ✅ Types
+// ======================
+interface SignUpFormValues {
+  username: string;
+  name: string;
+  email: string;
+  emailOtp: string;
+  mobile: string;
+  mobileOtp: string;
+  password: string;
+  confirmPassword: string;
+  state: string;
+  role: string;
+  agreement: boolean;
+  qualification?: string;
+  interest?: string;
+}
 
-const SignUpForm = () => {
-  const navigate = useNavigate();
+// ======================
+// ✅ Main Component
+// ======================
+const SignUpForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [emailOtpSent, setEmailOtpSent] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [mobileOtpSent, setMobileOtpSent] = useState(false);
+  const [mobileVerified, setMobileVerified] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [generatedMobileOtp, setGeneratedMobileOtp] = useState<string | null>(
+    null
+  );
+  const navigate = useNavigate();
 
+  // ======================
+  // ✅ Form Validation
+  // ======================
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string()
+      .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address")
+      .required("Email is required"),
+    mobile: Yup.string()
+      .matches(/^[6-9]\d{9}$/, "Enter a valid 10-digit mobile number")
+      .required("Mobile number is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password")], "Passwords must match")
+      .required("Confirm Password is required"),
+    agreement: Yup.boolean().oneOf([true], "You must agree to continue"),
+  });
+
+  const formik = useFormik<SignUpFormValues>({
+    initialValues: {
+      username: "",
+      name: "",
+      email: "",
+      emailOtp: "",
+      mobile: "",
+      mobileOtp: "",
+      password: "",
+      confirmPassword: "",
+      state: "",
+      role: "Admin",
+      agreement: false,
+      qualification: "",
+      interest: "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      if (!emailVerified || !mobileVerified) {
+        toast.warn("Please verify your Email and Mobile before signing up!");
+        return;
+      }
+      try {
+        setLoading(true);
+        const res = await registerUser(values);
+        if (res?.status === 200) {
+          toast.success("Registered successfully!");
+          navigate("/", { state: { email: values.email } });
+        } else {
+          toast.error(res?.data?.message || "Signup failed");
+        }
+      } catch (err: any) {
+        toast.error(err?.response?.data?.message || "Error during signup");
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+
+  // ======================
+  // ✅ OTP Handlers
+  // ======================
+  const handleSendEmailOtp = async () => {
+    if (!formik.values.email) return toast.warn("Enter email first!");
+    try {
+      setLoading(true);
+      const res = await sendEmailOtpApi({ email: formik.values.email });
+      if (res?.status === 200) {
+        setEmailOtpSent(true);
+        toast.success("Email OTP sent successfully!");
+      }
+    } catch {
+      toast.error("Failed to send Email OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyEmailOtp = async () => {
+    if (!formik.values.emailOtp) return toast.warn("Enter Email OTP!");
+    try {
+      setLoading(true);
+      const res = await verifyEmailOtpApi({
+        email: formik.values.email,
+        otp: formik.values.emailOtp,
+      });
+      if (res?.status === 200) {
+        setEmailVerified(true);
+        toast.success("Email verified successfully!");
+      } else toast.error("Invalid Email OTP");
+    } catch {
+      toast.error("Failed to verify Email OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendMobileOtp = async () => {
+    if (!formik.values.mobile) return toast.warn("Enter mobile number first!");
+    try {
+      setLoading(true);
+      const res = await sendMobileOtpApi({ mobile: formik.values.mobile });
+      if (res?.status === 200) {
+        setMobileOtpSent(true);
+
+        // ✅ Extract OTP from backend message (for debugging)
+        const message = res?.data || "";
+        const match = message.match(/\d{4,6}/);
+        if (match) {
+          setGeneratedMobileOtp(match[0]);
+          toast.success(`OTP sent! (Mock OTP: ${match[0]})`);
+        } else toast.success("OTP sent successfully!");
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to send Mobile OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyMobileOtp = async () => {
+    if (!formik.values.mobileOtp) return toast.warn("Enter Mobile OTP!");
+    try {
+      setLoading(true);
+      const res = await verifyMobileOtpApi({
+        mobile: formik.values.mobile,
+        otp: formik.values.mobileOtp,
+      });
+
+      if (res?.data?.message?.includes("verified")) {
+        setMobileVerified(true);
+        toast.success("Mobile verified successfully!");
+      } else toast.error(res?.data?.message || "Invalid Mobile OTP");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to verify Mobile OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ======================
+  // ✅ Render UI
+  // ======================
   return (
     <div className="min-h-screen w-full bg-[#0f2d48] flex items-center justify-center px-4 py-8">
       <div className="max-w-6xl w-full bg-linear-to-b from-[#0f2d48] to-[#1a3a57] rounded-xl shadow-2xl grid grid-cols-1 md:grid-cols-2 overflow-hidden">
@@ -44,85 +232,155 @@ const SignUpForm = () => {
             <span className=" text-2xl pb-1 text-white cursor-pointer">Sign Up</span>
           </div>
 
-          {/* FORM */}
-          <div className="space-y-5">
-
+          <form onSubmit={formik.handleSubmit} className="space-y-5">
             {/* Name */}
-            <div className="flex items-center gap-3 border border-gray-300/60 rounded-md px-3 py-3">
-              <RiUserLine className="text-xl" />
-              <input type="text" placeholder="Enter Your Name" className="bg-transparent outline-none w-full text-white placeholder-gray-300" />
-            </div>
+            <Input icon={User} name="name" placeholder="Enter Your Name" formik={formik} />
 
-            {/* Email with OTP */}
-            <div className="flex gap-2">
-              <div className="flex items-center gap-3 border border-gray-300/60 rounded-md px-3 py-3 w-full">
-                <HiOutlineMail className="text-xl" />
-                <input type="email" placeholder="Enter Your Email" className="bg-transparent outline-none w-full text-white placeholder-gray-300" />
+            {/* Email */}
+            <Input
+              icon={Mail}
+              name="email"
+              placeholder="Enter Your Email"
+              formik={formik}
+              rightButton={!emailVerified && (
+                <button
+                  type="button"
+                  onClick={handleSendEmailOtp}
+                  disabled={loading}
+                  className="text-sm text-sky-400 hover:text-sky-300"
+                >
+                  Send OTP
+                </button>
+              )}
+            />
+
+            {emailOtpSent && !emailVerified && (
+              <Input
+                name="emailOtp"
+                placeholder="Enter Email OTP"
+                formik={formik}
+                rightButton={
+                  <button
+                    type="button"
+                    onClick={handleVerifyEmailOtp}
+                    className="text-sm text-green-400 hover:text-green-300"
+                  >
+                    Verify
+                  </button>
+                }
+              />
+            )}
+
+            {/* Mobile */}
+            <Input
+              icon={Phone}
+              name="mobile"
+              placeholder="Enter Mobile Number"
+              formik={formik}
+              rightButton={!mobileVerified && (
+                <button
+                  type="button"
+                  onClick={handleSendMobileOtp}
+                  disabled={loading}
+                  className="text-sm text-sky-400 hover:text-sky-300"
+                >
+                  Send OTP
+                </button>
+              )}
+            />
+
+            {mobileOtpSent && !mobileVerified && (
+              <div>
+                <div>
+                  <Input
+                    name="mobileOtp"
+                    placeholder="Enter Mobile OTP"
+                    formik={formik}
+                    rightButton={
+                      <button
+                        type="button"
+                        onClick={handleVerifyMobileOtp}
+                        className="text-sm text-green-400 hover:text-green-300"
+                      >
+                        Verify
+                      </button>
+                    }
+                  />
+                </div>
+                {/* ✅ Show OTP from backend for testing */}
+                {generatedMobileOtp && (
+                  <p className="text-xs text-white-600 text-center mt-2">
+                    Your OTP is <span className="font-semibold text-xl text-green-400">{generatedMobileOtp}</span>.
+                    Please enter this code and click on the Verify button to confirm your mobile number.
+                  </p>
+
+                )}
               </div>
-              <button className="text-xs bg-green-500 px-3 rounded-md hover:bg-green-600">Send OTP</button>
-            </div>
-
-            <input type="text" placeholder="Enter Your Email OTP" className="w-full bg-transparent border border-gray-300/60 rounded-md px-3 py-3 text-white placeholder-gray-300" />
-
-            {/* Mobile with OTP */}
-            <div className="flex gap-2">
-              <div className="flex items-center gap-3 border border-gray-300/60 rounded-md px-3 py-3 w-full">
-                <HiOutlinePhone className="text-xl" />
-                <input type="text" placeholder="Enter Your Mobile Number" className="bg-transparent outline-none w-full text-white placeholder-gray-300" />
-              </div>
-              <button className="text-xs bg-green-500 px-3 rounded-md hover:bg-green-600">Send OTP</button>
-            </div>
-
-            <input type="text" placeholder="Enter Your Mobile OTP" className="w-full bg-transparent border border-gray-300/60 rounded-md px-3 py-3 text-white placeholder-gray-300" />
-
-            {/* Qualification */}
-            <div className="flex items-center gap-3 border border-gray-300/60 rounded-md px-3 py-3">
-              <FaUserGraduate className="text-xl" />
-              <select className="bg-transparent outline-none w-full text-white">
-                <option className="text-black">Choose your Qualification</option>
-                <option className="text-black">Graduate</option>
-                <option className="text-black">Post Graduate</option>
-                <option className="text-black">Other</option>
-              </select>
-            </div>
-
-            {/* Interest */}
-            <select className="w-full bg-transparent border border-gray-300/60 rounded-md px-3 py-3 text-white outline-none">
-              <option className="text-black">Choose your Interest</option>
-              <option className="text-black">Software</option>
-              <option className="text-black">Hardware</option>
-              <option className="text-black">Management</option>
-            </select>
+            )}
 
             {/* Password */}
-            <div className="flex items-center gap-3 border border-gray-300/60 rounded-md px-3 py-3">
-              <HiOutlineLockClosed className="text-xl" />
-              <input type={showPassword ? "text" : "password"} placeholder="Create your Password" className="bg-transparent outline-none w-full text-white placeholder-gray-300" />
-              <button onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <HiOutlineEyeOff /> : <HiOutlineEye />}
-              </button>
-            </div>
+            <PasswordField
+              name="password"
+              placeholder="Create Password"
+              show={showPassword}
+              setShow={setShowPassword}
+              formik={formik}
+            />
 
             {/* Confirm Password */}
-            <div className="flex items-center gap-3 border border-gray-300/60 rounded-md px-3 py-3">
-              <HiOutlineLockClosed className="text-xl" />
-              <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm your Password" className="bg-transparent outline-none w-full text-white placeholder-gray-300" />
-              <button onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                {showConfirmPassword ? <HiOutlineEyeOff /> : <HiOutlineEye />}
-              </button>
-            </div>
+            <PasswordField
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              show={showConfirmPassword}
+              setShow={setShowConfirmPassword}
+              formik={formik}
+            />
 
             {/* Terms */}
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input type="checkbox" className="accent-green-400" /> I Agree To The User Agreement And Privacy Policy
-            </label>
+            <div className="flex items-center gap-2 text-sm pt-2">
+              <input
+                type="checkbox"
+                {...formik.getFieldProps("agreement")}
+                className="accent-green-500 scale-110"
+              />
+              <span>
+                I Agree To The{" "}
+                <span className="text-green-400 font-medium">
+                  User Agreement
+                </span>{" "}
+                And{" "}
+                <span className="text-green-400 font-medium">
+                  Privacy Policy
+                </span>
+              </span>
+            </div>
 
-            {/* SIGN UP BUTTON */}
-            <button onClick={() => navigate("/login")} className="w-full py-3 rounded-md font-semibold bg-green-500 hover:bg-green-600 transition">
-              Sign Up
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={
+                loading ||
+                !formik.values.agreement ||
+                !emailVerified ||
+                !mobileVerified
+              }
+              className={`w-full py-3 rounded-lg font-bold text-lg transition duration-300 ${loading ? "bg-gray-500" : "bg-sky-500 hover:bg-sky-600"
+                } disabled:opacity-50 disabled:cursor-not-allowed mt-4`}
+            >
+              {loading ? "Processing..." : "Sign Up"}
             </button>
 
-          </div>
+            <p className="text-sm text-gray-400 text-center pt-2">
+              Already have an Account?{" "}
+              <button
+                type="button"
+                onClick={() => navigate("/")}
+                className="text-pink-400 font-medium hover:underline transition"
+              >
+                Sign In
+              </button>
+            </p>
+          </form>
         </div>
       </div>
     </div>
@@ -130,3 +388,55 @@ const SignUpForm = () => {
 };
 
 export default SignUpForm;
+
+// ======================
+// ✅ Reusable Components
+// ======================
+const Input = ({ icon: Icon, name, placeholder, formik, rightButton }: any) => (
+  <div>
+    <div
+      className={`flex items-center gap-3 border rounded-md px-3 py-3 w-full ${formik.touched[name] && formik.errors[name]
+          ? "border-red-500"
+          : "border-gray-300/60"
+        }`}
+    >
+      {Icon && <Icon className="text-gray-200" />}
+      <input
+        type="text"
+        placeholder={placeholder}
+        {...formik.getFieldProps(name)}
+        className="bg-transparent outline-none w-full text-white placeholder-gray-300"
+      />
+      {rightButton}
+    </div>
+    {formik.touched[name] && formik.errors[name] && (
+      <div className="text-red-400 text-xs mt-1">{formik.errors[name]}</div>
+    )}
+  </div>
+);
+
+const PasswordField = ({ name, placeholder, show, setShow, formik }: any) => (
+  <div>
+    <div
+      className={`flex items-center gap-3 border rounded-md px-3 py-3 w-full ${formik.touched[name] && formik.errors[name]
+          ? "border-red-500"
+          : "border-gray-300/60"
+        }`}
+    >
+      <Lock className="text-gray-200" />
+      <input
+        type={show ? "text" : "password"}
+        placeholder={placeholder}
+        {...formik.getFieldProps(name)}
+        className="bg-transparent outline-none w-full text-white placeholder-gray-300"
+      />
+      <button
+        type="button"
+        onClick={() => setShow(!show)}
+        className="text-gray-300 hover:text-white"
+      >
+        {show ? <EyeOff size={18} /> : <Eye size={18} />}
+      </button>
+    </div>
+  </div>
+);
