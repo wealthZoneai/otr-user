@@ -25,7 +25,7 @@ const StateGovtJobsHeader: React.FC<FilterProps> = ({
     <div className="w-full rounded-xl max-w-6xl mx-auto flex flex-wrap justify-between items-center bg-white py-4 px-6 relative">
       {/* Title */}
       <h2 className="text-2xl font-bold text-[#001F5C] underline underline-offset-4">
-        State Govt. Jobs
+        Jobs List
       </h2>
 
       {/* Filters */}

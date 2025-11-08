@@ -14,8 +14,6 @@ import NotificationsPage from "../pages/Notification-section/NotificationsPage";
 import UpcomingNotificationsPage from "../pages/Notification-section/UpcomingNotificationsPage";
 import ApplicationStatus from "../pages/Notification-section/ApplicationStatus";
  
-// 🧾 Registration
-import RegistrationForm from "../pages/RegistrationSteps/RegistrationForm";
  
 // 🧍 My Account
 import MyAccount from "../pages/Myaccount/MyAccount";
@@ -58,3 +56,5 @@ const AppRoutes: React.FC = () => {
 };
  
 export default AppRoutes;
+ 
+ 

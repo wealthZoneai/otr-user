@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaDownload,
   FaHome,
@@ -7,10 +7,13 @@ import {
   FaRocket,
   FaCalendarAlt,
   FaUserCircle,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 
 const HomeNavbar: React.FC = () => {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <nav className="w-full h-16 flex items-center justify-between px-8 bg-gradient-to-r from-[#002366] to-[#00b8d9] shadow-md fixed top-0 left-0 z-50">
@@ -32,7 +35,7 @@ const HomeNavbar: React.FC = () => {
       {/* RIGHT SIDE — Navigation Links */}
       <div className="flex items-center gap-8 text-white font-medium">
         <a
-          href="#"
+          href="/home"
           className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
         >
           <FaHome size={18} />
@@ -40,7 +43,7 @@ const HomeNavbar: React.FC = () => {
         </a>
 
         <a
-          href="#"
+          href="/home-notifications"
           className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
         >
           <FaBell size={18} />
@@ -74,6 +77,7 @@ const HomeNavbar: React.FC = () => {
         {/* Profile Icon */}
         <FaUserCircle
           size={30}
+          onClick={() => navigate('/my-account')}
           className="cursor-pointer hover:text-yellow-300 transition duration-200"
           title="Profile"
         />

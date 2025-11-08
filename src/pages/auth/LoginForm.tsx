@@ -51,13 +51,12 @@ const UserLoginForm: React.FC = () => {
     initialValues: { email: "", password: "", role: "Admin" },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      navigate("/home");
       try {
         const response = await loginUser({
           email: values.email,
           password: values.password,
         });
-
+        
         if (response?.data?.jwtToken) {
           localStorage.setItem("token", response.data.jwtToken);
 
@@ -76,7 +75,6 @@ const UserLoginForm: React.FC = () => {
         }
       } catch (error) {
         toast.error(
-          error?.response?.data?.message ||
             "Login failed. Please check your credentials."
         );
       } finally {

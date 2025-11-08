@@ -199,3 +199,36 @@ export function verifyMobileOtpApi({ mobile, otp }: VerifyMobileOtpBody) {
   const body = { mobile, otp };
   return server.post(endpoints.verifyMobileOtp, body, { requiresAuth: false })
 }
+
+
+// 
+
+export function GetJobNotification(quary:any) {
+  return server.get(endpoints.getJobNotification + quary, { requiresAuth: false });
+}
+
+
+//  For Syllabus
+export function GetAllSyllabus() {
+  return server.get(endpoints.getAllSyllabus, { requiresAuth: false });
+}
+
+//  For PQP
+export function GetAllPQP() {
+  return server.get(endpoints.getAllPQP, { requiresAuth: false });
+}
+
+//  For Answer Key
+export function GetAllAnswerKeys() {
+  return server.get(endpoints.getAllAnswerKeys, { requiresAuth: false });
+}
+
+//  For Results
+export function GetAllResults() {
+  return server.get(endpoints.getAllResults, { requiresAuth: false });
+}
+
+// For Cut-Off
+export function GetAllCutOffs() {
+  return server.get(endpoints.getAllCutOffs, { requiresAuth: false });
+}

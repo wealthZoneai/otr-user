@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 
-export const Declaration: React.FC = () => {
+interface DeclarationProps {
+  prevStep?: () => void;
+  onConfirm?: () => void; // optional if you want to handle final submit externally
+}
+
+const Declaration: React.FC<DeclarationProps> = ({ prevStep, onConfirm }) => {
   const [agreed, setAgreed] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!agreed) {
       alert("Please agree to the terms and conditions before proceeding.");
       return;
     }
-    alert("Declaration Confirmed!");
+
+    alert("✅ Declaration Confirmed!");
+    if (onConfirm) onConfirm(); // optional callback to handle final submission
   };
 
   return (
@@ -64,14 +72,24 @@ export const Declaration: React.FC = () => {
           </label>
         </div>
 
-        {/* Confirm Button */}
-        <div className="pt-6 text-left">
+        {/* Navigation Buttons */}
+        <div className="flex justify-between pt-6">
+          {prevStep && (
+            <button
+              type="button"
+              onClick={prevStep}
+              className="rounded-md bg-gradient-to-r from-gray-100 to-gray-200 py-2 px-8 text-lg font-semibold text-gray-700 shadow-sm hover:from-gray-200 hover:to-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200"
+            >
+              Back
+            </button>
+          )}
+
           <button
             type="submit"
             disabled={!agreed}
             className={`rounded-md py-2 px-10 text-lg font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
               agreed
-                ? "bg-linear-to-r from-pink-500 via-rose-500 to-pink-600 text-white hover:from-pink-600 hover:via-rose-600 hover:to-pink-700 focus:ring-pink-400"
+                ? "bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 text-white hover:from-pink-600 hover:via-rose-600 hover:to-pink-700 focus:ring-pink-400"
                 : "bg-gray-300 text-gray-600 cursor-not-allowed"
             }`}
           >
