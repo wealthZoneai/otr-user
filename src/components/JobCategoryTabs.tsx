@@ -1,11 +1,23 @@
 import React, { useRef } from "react";
-import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
+import { motion } from "framer-motion";
 
-const JobCategoryTabs: React.FC = () => {
+interface JobCategoryTabsProps {
+  activeCategory: string;
+  setActiveCategory: (category: string) => void;
+  activeSubTab: string;
+  setActiveSubTab: (tab: string) => void;
+}
+
+const JobCategoryTabs: React.FC<JobCategoryTabsProps> = ({
+  activeCategory,
+  setActiveCategory,
+  activeSubTab,
+  setActiveSubTab,
+}) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const categories = [
-    "All India Govt. Jobs",
+    "All India Jobs",
     "State Govt. Jobs",
     "Bank Jobs",
     "Teaching Jobs",
@@ -17,70 +29,58 @@ const JobCategoryTabs: React.FC = () => {
     "Clerk Jobs",
   ];
 
-  // 🔹 Scroll function — 3 categories at a time
-  const handleScroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const container = scrollRef.current;
-      const scrollAmount = container.clientWidth / 3;
-      container.scrollBy({
-        left: direction === "right" ? scrollAmount : -scrollAmount,
-        behavior: "smooth",
-      });
-    }
-  };
+  const subTabs = ["Syllabus", "PQP", "Answer Key", "Results", "Cut-Off"];
 
   return (
-    <div className="w-full max-w-6xl mx-auto bg-white rounded-lg shadow-md border border-gray-200 p-4">
-      {/* 🔹 Top Category Tabs with Scroll */}
-      <div className="flex items-center justify-between relative">
-        {/* Left Scroll Button (Rectangular) */}
-        <button
-          onClick={() => handleScroll("left")}
-          className="absolute left-0 z-10 h-full px-2 bg-[#001F5C] text-white hover:bg-[#003399] transition duration-200 hidden md:flex items-center justify-center"
-        >
-          <FaChevronLeft size={18} />
-        </button>
+    <div className="w-full max-w-6xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+      <h2 className="text-2xl font-semibold mb-6 text-center text-[#1a237e]">
+        Job Categories
+      </h2>
 
-        {/* Scrollable Category Container */}
-        <div
-          ref={scrollRef}
-          className="flex overflow-x-auto scrollbar-hide gap-2 mx-8 scroll-smooth"
-        >
-          {categories.map((cat, index) => (
-            <button
-              key={index}
-              className={`whitespace-nowrap px-4 py-2 text-sm font-medium rounded-md flex-shrink-0 ${
-                cat === "State Govt. Jobs"
-                  ? "bg-[#008080] text-white"
-                  : "bg-[#001F5C] text-white hover:bg-[#003399]"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Right Scroll Button (Rectangular) */}
-        <button
-          onClick={() => handleScroll("right")}
-          className="absolute rounded-xl right-0 z-10 h-full  px-2 bg-[#001F5C] text-white hover:bg-[#003399] transition duration-200 hidden md:flex items-center justify-center"
-        >
-          <FaChevronRight size={18} />
-        </button>
+      {/* 🔹 Scrollable Category Tabs */}
+      <div
+        ref={scrollRef}
+        className="flex overflow-x-auto no-scrollbar gap-3 pb-2"
+      >
+        {categories.map((cat) => (
+          <motion.button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            whileTap={{ scale: 0.95 }}
+            className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 border ${
+              activeCategory === cat
+                ? "bg-[#1a237e] text-white border-[#1a237e]"
+                : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+            }`}
+          >
+            {cat}
+          </motion.button>
+        ))}
       </div>
 
-      {/* Divider */}
-      <div className="border-t border-gray-300 my-4"></div>
+      <div className="border-t border-gray-200 my-5"></div>
 
-      {/* 🔹 Bottom Sub Tabs */}
-      <div className="flex justify-center gap-10 text-sm font-medium text-gray-800">
-        <span className="cursor-pointer hover:text-[#001F5C] font-semibold underline underline-offset-4">
-          Syllabus
-        </span>
-        <span className="cursor-pointer hover:text-[#001F5C]">PQP</span>
-        <span className="cursor-pointer hover:text-[#001F5C]">Answer Key</span>
-        <span className="cursor-pointer hover:text-[#001F5C]">Results</span>
-        <span className="cursor-pointer hover:text-[#001F5C]">Cut-Off</span>
+      {/* 🔹 Sub Tabs */}
+      <div className="flex justify-center flex-wrap gap-8 mb-2">
+        {subTabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveSubTab(tab)}
+            className={`relative text-sm font-medium transition ${
+              activeSubTab === tab
+                ? "text-[#1a237e] font-semibold"
+                : "text-gray-600 hover:text-[#1a237e]"
+            }`}
+          >
+            {tab}
+            {activeSubTab === tab && (
+              <motion.div
+                layoutId="underline"
+                className="absolute left-0 right-0 -bottom-1 h-[2px] bg-[#1a237e] rounded-full"
+              />
+            )}
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -1,43 +1,60 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+ 
+// 🌍 Public Pages
 import Landing from "../pages/Landing";
-import RegistrationForm from "../pages/RegistrationSteps/RegistrationForm";
-import AppLayout from "../layouts/AppLayout";
-import NotificationsPage from "../pages/Notification-section/NotificationsPage";
-import UpcomingNotificationsPage from "../pages/Notification-section/UpcomingNotificationsPage";
 import UserLoginForm from "../pages/auth/LoginForm";
 import SignUpForm from "../pages/auth/SignUpForm";
+ 
+// 🏠 Dashboard & Layout
+import AppLayout from "../layouts/AppLayout";
 import Home from "../pages/Home";
+import HomeNotification from "../pages/Notification-section/HomeNotification";
+import NotificationsPage from "../pages/Notification-section/NotificationsPage";
+import UpcomingNotificationsPage from "../pages/Notification-section/UpcomingNotificationsPage";
+import ApplicationStatus from "../pages/Notification-section/ApplicationStatus";
+ 
+ 
+// 🧍 My Account
 import MyAccount from "../pages/Myaccount/MyAccount";
-import ApplicationLayout from "../pages/Myaccount/ApplicationLayout"; // Import the layout
-
+import ApplicationLayout from "../pages/Myaccount/ApplicationLayout";
+ 
+// 🧩 Newly Added Pages
+import AdmitCardReleasedPage from "../pages/AdmitCardReleasedPage";
+import ResultPage from "../pages/ResultPage";
+import JobApplication from "../pages/OtrRegistrationSteps/JobApplication";
+ 
 const AppRoutes: React.FC = () => {
-    return (
-        <BrowserRouter>
-            <Routes>
-                {/* 🌍 Public routes */}
-                <Route path="/" element={<Landing />} />
-                <Route path="/login" element={<UserLoginForm />} />
-                <Route path="/signup" element={<SignUpForm />} />
-                <Route path="/notifications" element={<NotificationsPage />} />
-                <Route path="/upcoming-notifications" element={<UpcomingNotificationsPage />} />
-                    <Route path="/Myaccount/*" element={<ApplicationLayout />} />
-                <Route path="/my-account" element={<MyAccount />} />
-
-                {/* 🔒 Protected/Authenticated Layout */}
-                <Route element={<AppLayout />}>
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/register" element={<RegistrationForm />} />
-
-                    {/* 🎯 PARENT ROUTE for My Account Section 
-             Note: Using "/Myaccount" to match the paths defined in the sidebar 
-             The trailing "/*" allows nested routes to work correctly. */}
-                </Route>
-
-                {/* Optional: Add a route for the simple MyAccount container if needed */}
-            </Routes>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* 🌍 Public Routes */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<UserLoginForm />} />
+        <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/upcoming-notifications" element={<UpcomingNotificationsPage />} />
+ 
+        {/* 🧍 My Account Section (separate layout) */}
+        <Route path="/my-account" element={<MyAccount />} />
+        <Route path="/Myaccount/*" element={<ApplicationLayout />} />
+ 
+        {/* 🔒 Protected Routes under AppLayout */}
+        <Route element={<AppLayout />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/otr" element={<JobApplication />} />
+          <Route path="/home-notifications" element={<HomeNotification />} />
+          <Route path="/application-status" element={<ApplicationStatus />} />
+ 
+          {/* 🆕 Additional Pages */}
+          <Route path="/admit-card-released" element={<AdmitCardReleasedPage />} />
+          <Route path="/result-list" element={<ResultPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 };
-
+ 
 export default AppRoutes;
+ 
+ 

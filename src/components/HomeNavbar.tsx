@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaDownload,
@@ -7,10 +7,13 @@ import {
   FaRocket,
   FaCalendarAlt,
   FaUserCircle,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 
 const HomeNavbar: React.FC = () => {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <nav className="w-full h-16 flex items-center justify-between px-8 bg-gradient-to-r from-[#002366] to-[#00b8d9] shadow-md fixed top-0 left-0 z-50">
@@ -23,10 +26,7 @@ const HomeNavbar: React.FC = () => {
           LOGO
         </div>
 
-        <button
-          onClick={() => navigate("/admit-card")}
-          className="flex items-center gap-2 bg-teal-300 text-black font-semibold px-4 py-1.5 rounded-md hover:bg-teal-400 transition duration-200"
-        >
+        <button className="flex items-center gap-2 bg-teal-300 text-black font-semibold px-4 py-1.5 rounded-md hover:bg-teal-400 transition duration-200">
           <FaDownload className="text-black" />
           Admit Card
         </button>
@@ -34,37 +34,37 @@ const HomeNavbar: React.FC = () => {
 
       {/* RIGHT SIDE — Navigation Links */}
       <div className="flex items-center gap-8 text-white font-medium">
-        <button
-          onClick={() => navigate("/")}
+        <a
+          href="/home"
           className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
         >
           <FaHome size={18} />
           <span>Home</span>
-        </button>
+        </a>
 
-        <button
-          onClick={() => navigate("/notifications")}
+        <a
+          href="/home-notifications"
           className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
         >
           <FaBell size={18} />
           <span>Notifications</span>
-        </button>
+        </a>
 
-        <button
-          onClick={() => navigate("/tracking")}
+        <a
+          href="#"
           className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
         >
           <FaRocket size={18} />
           <span>Tracking</span>
-        </button>
+        </a>
 
-        <button
-          onClick={() => navigate("/upcoming-jobs")}
+        <a
+          href="#"
           className="flex items-center gap-2 hover:text-yellow-300 transition duration-200"
         >
           <FaCalendarAlt size={18} />
           <span>Upcoming Jobs</span>
-        </button>
+        </a>
 
         {/* OTR Button */}
         <button
@@ -74,12 +74,12 @@ const HomeNavbar: React.FC = () => {
           OTR
         </button>
 
-        {/* Profile Icon → Navigates to My Account */}
+        {/* Profile Icon */}
         <FaUserCircle
           size={30}
+          onClick={() => navigate('/my-account')}
           className="cursor-pointer hover:text-yellow-300 transition duration-200"
-          title="My Account"
-          onClick={() => navigate("/my-account")}
+          title="Profile"
         />
       </div>
     </nav>

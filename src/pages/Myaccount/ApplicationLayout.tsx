@@ -9,7 +9,6 @@ import Wallet from "./Wallet";
 import HomeNavbar from "../../components/HomeNavbar";
 
 import Jobs from "./jobs";
-import OtrForm from "./OtrForm";
 
 // Placeholder components
 const OTRForm: React.FC = () => (
@@ -23,14 +22,14 @@ const ApplicationLayout: React.FC = () => {
       <HomeNavbar />
 
       {/* ⚙️ Main Flex Layout */}
-      <div className="flex pt-16 bg-gray-100 ">
+      <div className="flex pt-16 bg-gray-100 min-h-screen overflow-hidden">
         {/* 📂 Sidebar */}
         <div className="w-[260px] p-2 ">
           <Sidebar />
         </div>
 
         {/* 📄 Content Area */}
-        <div className="flex-1 bg-gray-50  pl-6 p-3 ">
+        <div className="flex-1 bg-gray-50 overflow-y-auto rounded-tl-3xl shadow-inner p-6">
         
 
           {/* Routes */}
@@ -41,7 +40,7 @@ const ApplicationLayout: React.FC = () => {
 
               {/* Page Routes */}
               <Route path="Wallet" element={<Wallet />} />
-              <Route path="otr-form" element={<OtrForm />} />
+              <Route path="otr-form" element={<OTRForm />} />
               <Route path="MyAccountPQP" element={<MyAccountPQP />} />
               <Route path="SavedJobs" element={<Jobs />} />
               <Route path="Refer" element={<Refer />} />

@@ -6,14 +6,17 @@ const MyAccount: React.FC = () => {
   return (
     <>
     <HomeNavbar/>
-    <div className="   ">
+    <div className="  flex pt-16">
       
       {/* Sidebar on left */}
-      <div className=" flex ">
+      <div className=" p-2 ">
         <Sidebar />
       </div>
 
-     
+      {/* Main Content Area */}
+      <div className="  w-full p-2 rounded-xl roun">
+      
+      </div>
     </div>
     </>
   );

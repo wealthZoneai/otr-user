@@ -10,7 +10,7 @@ const AppLayout: React.FC = () => {
       <HomeNavbar />
 
       {/* Page content */}
-      <main className="flex-1">
+      <main className="flex-1 mt-20">
         <Outlet /> {/* Renders the nested page (Home, Tracking, etc.) */}
       </main>
 

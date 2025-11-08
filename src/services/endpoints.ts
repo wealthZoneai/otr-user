@@ -1,3 +1,4 @@
+import type { GetJobNotification } from "./apiHelpers"
 
 
 const endpoints = {
@@ -14,6 +15,12 @@ const endpoints = {
     uploadResult: 'api/result/Resultupload',
     uploadCutoff: 'api/cutoff/upload',
     createJobpost: 'jobpost/create',
+    getJobNotification: 'jobpost/search?jobCategory=',
+    getAllSyllabus: "api/syllabus/GetAllSyllabus",
+    getAllPQP: "api/pqp/getallPQPs",
+    getAllAnswerKeys: "api/answerkey/getallAnswerKeys",
+    getAllResults: "api/result/resultAll",
+    getAllCutOffs: "api/cutoff/getAllCutOff",
 
 
 }
