@@ -53,6 +53,7 @@ const UserLoginForm: React.FC = () => {
     initialValues: { email: "", password: "", role: "Admin" },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
+      navigate("/home");
       try {
         const response = await loginUser({
           email: values.email,
@@ -75,7 +76,7 @@ const UserLoginForm: React.FC = () => {
         } else {
           toast.error("Login failed. Token not received.");
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(
           error?.response?.data?.message ||
             "Login failed. Please check your credentials."

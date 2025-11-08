@@ -8,37 +8,36 @@ import UpcomingNotificationsPage from "../pages/Notification-section/UpcomingNot
 import UserLoginForm from "../pages/auth/LoginForm";
 import SignUpForm from "../pages/auth/SignUpForm";
 import Home from "../pages/Home";
+import MyAccount from "../pages/Myaccount/MyAccount";
+import ApplicationLayout from "../pages/Myaccount/ApplicationLayout"; // Import the layout
 
 const AppRoutes: React.FC = () => {
-  // ✅ Auth check temporarily disabled for testing
-  // const isAuthenticated = localStorage.getItem("token");
+    return (
+        <BrowserRouter>
+            <Routes>
+                {/* 🌍 Public routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/login" element={<UserLoginForm />} />
+                <Route path="/signup" element={<SignUpForm />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/upcoming-notifications" element={<UpcomingNotificationsPage />} />
+                    <Route path="/Myaccount/*" element={<ApplicationLayout />} />
+                <Route path="/my-account" element={<MyAccount />} />
 
-  // Later you can re-enable it easily like this:
-  // if (!isAuthenticated) {
-  //   return <Navigate to="/login" />;
-  // }
+                {/* 🔒 Protected/Authenticated Layout */}
+                <Route element={<AppLayout />}>
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/register" element={<RegistrationForm />} />
 
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* 🌍 Public routes */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<UserLoginForm />} />
-        <Route path="/signup" element={<SignUpForm />} />
-        <Route path="/notifications" element={<NotificationsPage />} />
-        <Route
-          path="/upcoming-notifications"
-          element={<UpcomingNotificationsPage />}
-        />
+                    {/* 🎯 PARENT ROUTE for My Account Section 
+             Note: Using "/Myaccount" to match the paths defined in the sidebar 
+             The trailing "/*" allows nested routes to work correctly. */}
+                </Route>
 
-        {/* 🔒 Protected routes (accessible for now) */}
-        <Route element={<AppLayout />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/register" element={<RegistrationForm />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
+                {/* Optional: Add a route for the simple MyAccount container if needed */}
+            </Routes>
+        </BrowserRouter>
+    );
 };
 
 export default AppRoutes;
