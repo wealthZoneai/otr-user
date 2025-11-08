@@ -11,7 +11,6 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-
 import Illustration from "../../assets/login-vector-img.png";
 import { loginUser } from "../../services/apiHelpers";
 import { setUserData } from "../../store/slice/userData";
@@ -43,7 +42,6 @@ const UserLoginForm: React.FC = () => {
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
-    role: Yup.string().required("Role is required"),
   });
 
   // ----------------------
@@ -86,102 +84,97 @@ const UserLoginForm: React.FC = () => {
     },
   });
 
-  const handleClick = () => {
-    navigate("/signup");
-  };
-
   // ----------------------
   // ✅ JSX
   // ----------------------
   return (
-    <div className="min-h-screen w-full bg-[#0f2d48] flex items-center justify-center px-4 py-8">
-      <div className="max-w-5xl w-full bg-gradient-to-b from-[#0f2d48] to-[#1a3a57] rounded-xl shadow-2xl grid grid-cols-1 md:grid-cols-2 overflow-hidden">
+    <div className="bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] min-h-screen w-full flex items-center justify-center px-4 py-8">
+      <div className="max-w-5xl w-full bg-white rounded-xl shadow-xl grid grid-cols-1 md:grid-cols-2 overflow-hidden">
         {/* LEFT SECTION */}
-        <div className="flex flex-col justify-center items-center text-white py-10 px-6">
-          <motion.h2
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="text-2xl md:text-3xl font-bold mb-6 text-center"
-          >
-            Welcome to the Login Page!
-          </motion.h2>
-
+        <div className="hidden md:flex items-center justify-center bg-gray-100 p-8">
           <motion.img
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
             src={Illustration}
             alt="Login Illustration"
-            className="w-72 md:w-80"
+            className="w-80 h-auto object-contain"
           />
         </div>
 
         {/* RIGHT SECTION */}
-        <div className="bg-[#214166] bg-opacity-50 backdrop-blur-xl flex flex-col p-8 md:p-12 text-white">
-          {/* Tabs */}
-          <div className="flex space-x-10 mb-8 text-lg font-semibold justify-center">
-            <span className="border-white text-2xl font-bold pb-1 cursor-pointer">
-              Login
-            </span>
-          </div>
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col justify-center p-10 md:p-14"
+        >
+          {/* Header */}
+          <h2 className="text-2xl md:text-3xl font-semibold text-center text-gray-800 mb-6">
+            Sign in to your account
+          </h2>
 
           {/* FORM */}
-          <form onSubmit={formik.handleSubmit} className="space-y-6">
+          <form onSubmit={formik.handleSubmit} className="space-y-5">
             {/* Email */}
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-3 border border-gray-300/60 rounded-md px-3 py-3">
-                <HiOutlineMail className="text-xl text-gray-200" />
+            <div>
+              <div className="flex items-center gap-3 border border-gray-300 rounded-md px-3 py-2">
+                <HiOutlineMail className="text-gray-500 text-lg" />
                 <input
-                  type="text"
+                  type="email"
                   name="email"
-                  placeholder="Email or Phone Number"
+                  placeholder="Enter your email"
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-transparent outline-none w-full text-white placeholder-gray-300"
+                  className="w-full outline-none bg-transparent text-gray-800"
                 />
               </div>
               {formik.touched.email && formik.errors.email && (
-                <p className="text-red-400 text-sm">{formik.errors.email}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formik.errors.email}
+                </p>
               )}
             </div>
 
             {/* Password */}
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-3 border border-gray-300/60 rounded-md px-3 py-3">
-                <HiOutlineLockClosed className="text-xl text-gray-200" />
+            <div>
+              <div className="flex items-center gap-3 border border-gray-300 rounded-md px-3 py-2">
+                <HiOutlineLockClosed className="text-gray-500 text-lg" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="Password"
+                  placeholder="Enter your password"
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-transparent outline-none w-full text-white placeholder-gray-300"
+                  className="w-full outline-none bg-transparent text-gray-800"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  className="focus:outline-none"
                 >
                   {showPassword ? (
-                    <HiOutlineEyeOff className="text-gray-200" />
+                    <HiOutlineEyeOff className="text-gray-500" />
                   ) : (
-                    <HiOutlineEye className="text-gray-200" />
+                    <HiOutlineEye className="text-gray-500" />
                   )}
                 </button>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <p className="text-red-400 text-sm">{formik.errors.password}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formik.errors.password}
+                </p>
               )}
             </div>
 
-            {/* Remember & Forgot */}
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="accent-blue-400" />
-                Remember
-              </label>
-              <span className="cursor-pointer text-gray-300 hover:text-white">
+            {/* Forgot Password */}
+            <div className="text-right">
+              <span
+                onClick={() => navigate("/forgot-password")}
+                className="text-[#0072ff] text-sm cursor-pointer hover:underline"
+              >
                 Forgot Password?
               </span>
             </div>
@@ -190,22 +183,23 @@ const UserLoginForm: React.FC = () => {
             <button
               type="submit"
               disabled={formik.isSubmitting}
-              className="w-full py-3 rounded-md font-semibold bg-gradient-to-r from-[#3568a8] to-[#49c1a9] hover:opacity-90 transition"
+              className="w-full py-3 rounded-md font-semibold bg-[#001F5C] text-white hover:bg-[#003399] transition"
             >
               {formik.isSubmitting ? "Logging in..." : "Login"}
             </button>
 
-            <p className="text-sm text-center text-gray-300">
+            {/* Signup link */}
+            <p className="text-center text-gray-600 text-sm mt-4">
               Don’t have an account?{" "}
               <span
-                onClick={handleClick}
-                className="text-green-300 cursor-pointer"
+                onClick={() => navigate("/signup")}
+                className="text-[#0072ff] cursor-pointer hover:underline"
               >
-                Sign Up
+                Create an account
               </span>
             </p>
           </form>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

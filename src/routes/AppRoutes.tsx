@@ -8,12 +8,17 @@ import UpcomingNotificationsPage from "../pages/Notification-section/UpcomingNot
 import UserLoginForm from "../pages/auth/LoginForm";
 import SignUpForm from "../pages/auth/SignUpForm";
 import Home from "../pages/Home";
+import HomeNotification from "../pages/Notification-section/HomeNotification";
+import ApplicationStatus from "../pages/Notification-section/ApplicationStatus";
+
+// ✅ Newly added pages
+import AdmitCardReleasedPage from "../pages/AdmitCardReleasedPage";
+import ResultPage from "../pages/ResultPage";
 
 const AppRoutes: React.FC = () => {
-  // ✅ Auth check temporarily disabled for testing
+  // ✅ Auth check (temporarily disabled for testing)
   // const isAuthenticated = localStorage.getItem("token");
 
-  // Later you can re-enable it easily like this:
   // if (!isAuthenticated) {
   //   return <Navigate to="/login" />;
   // }
@@ -35,6 +40,15 @@ const AppRoutes: React.FC = () => {
         <Route element={<AppLayout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/register" element={<RegistrationForm />} />
+          <Route path="/home-notifications" element={<HomeNotification />} />
+          <Route path="/application-status" element={<ApplicationStatus />} />
+
+          {/* ✅ Newly added routes */}
+          <Route
+            path="/admit-card-released"
+            element={<AdmitCardReleasedPage />}
+          />
+          <Route path="/result-list" element={<ResultPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
