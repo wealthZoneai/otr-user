@@ -310,5 +310,12 @@ export function paymentSuccess(payload: {
   });
 }
 
+export function DownloadAdminCard(otr:any) {
+  return server.get(endpoints.DownloadAdminCard+otr, { requiresAuth: false });
+}
+export function GetuserDataOtr( otr:any) {
+  return server.get(endpoints.getuserDataOtr+otr, { requiresAuth: false });
+}
+
 
 

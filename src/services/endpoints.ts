@@ -23,6 +23,8 @@ const endpoints = {
     getCandidateOTRAS: "api/candidate/GetProfileByCandidateId?candidateId=",
     payment: "api/payment/create-checkout-session",
     paymentSucess: "api/payment/application/submit",
+    DownloadAdminCard: "api/admit-card/get-by-otr?otrId=",
+    getuserDataOtr: "api/admit-card/all-by-candidate?candidateId=",
 
 
 }

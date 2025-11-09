@@ -24,7 +24,7 @@ interface UserState {
 /* 🚀 2️⃣ Initial State */
 /* -------------------------------------------------------------------------- */
 const initialState: UserState = {
-  otrNumber: localStorage.getItem("otrNumber"),
+  otrNumber: localStorage.getItem("otrNumber") ? localStorage.getItem("otrNumber") : 'AP25548509',
   paymentData: null,
 };
 

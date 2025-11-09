@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   FaDownload,
@@ -10,14 +10,72 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { DownloadAdminCard, GetuserDataOtr } from "../services/apiHelpers";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store";
+import { generateAdmitCardPDF } from "../Utils/generateAdmitCardPDF";
 
 const HomeNavbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [userdata, setUserData] = useState([]);
+  const candidateId = useSelector((state: RootState) => state.user.candidateId);
+  const otrId = localStorage.getItem("otrNumber");
+  console.log(userdata,candidateId)
 
-  // ✅ Helper function to detect active route
+
+ useEffect(() => {
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const success = await GetuserDataOtr(candidateId);
+      if (success) {
+        setUserData(success?.data)
+        console.log(success?.data)
+        if(success?.data[0].otrasId){
+          localStorage.setItem("otrNumber", success?.data[0].otrasId);
+        }
+      } 
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (candidateId) {
+    fetchUserData();
+  }
+}, [candidateId]);
+
+
   const isActive = (path: string) => location.pathname === path;
+
+  const handleAdmitCardDownload = async () => {
+    if (!otrId) {
+      toast.warn("❌ No OTR ID found. Please log in or register first.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await DownloadAdminCard(otrId);
+     if (response.status === 200 && response.data) {
+      generateAdmitCardPDF(response.data);
+      toast.success("✅ Admit Card downloaded successfully!");
+    } else {
+        toast.error("❌ Failed to download Admit Card.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("❌ Something went wrong while downloading.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <nav className="w-full bg-gradient-to-r from-[#002366] to-[#00b8d9] shadow-md fixed top-0 left-0 z-50">
@@ -31,9 +89,17 @@ const HomeNavbar: React.FC = () => {
             LOGO
           </div>
 
-          <button className="hidden sm:flex items-center gap-2 bg-teal-300 text-black font-semibold px-4 py-1.5 rounded-md hover:bg-teal-400 transition duration-200">
+          <button
+            onClick={handleAdmitCardDownload}
+            disabled={loading}
+            className={`hidden sm:flex items-center gap-2 ${
+              loading
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-teal-300 hover:bg-teal-400"
+            } text-black font-semibold px-4 py-1.5 rounded-md transition duration-200`}
+          >
             <FaDownload className="text-black" />
-            Admit Card
+            {loading ? "Downloading..." : "Admit Card"}
           </button>
         </div>
 
