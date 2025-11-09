@@ -23,6 +23,10 @@ import ApplicationLayout from "../pages/Myaccount/ApplicationLayout";
 import AdmitCardReleasedPage from "../pages/AdmitCardReleasedPage";
 import ResultPage from "../pages/ResultPage";
 import JobApplication from "../pages/OtrRegistrationSteps/JobApplication";
+import JobApplicationForm from "../pages/JobApplicationForm";
+import PaymentPage from "../pages/Payment";
+import PaymentSuccess from "../pages/PaymentSucess";
+import PaymentFailed from "../pages/PaymentFailed";
  
 const AppRoutes: React.FC = () => {
   return (
@@ -38,11 +42,18 @@ const AppRoutes: React.FC = () => {
         {/* 🧍 My Account Section (separate layout) */}
         <Route path="/my-account" element={<MyAccount />} />
         <Route path="/Myaccount/*" element={<ApplicationLayout />} />
+        <Route path="/Myaccount/*" element={<ApplicationLayout />} />
  
         {/* 🔒 Protected Routes under AppLayout */}
         <Route element={<AppLayout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/otr" element={<JobApplication />} />
+          <Route path="/jobApplicationForm" element={<JobApplicationForm/>} />
+          <Route path="/paymentPage" element={<PaymentPage/>} />
+          <Route path="/paymentSucess" element={<PaymentSuccess/>} />
+          <Route path="/paymentfaild" element={<PaymentFailed/>} />
+      
+
           <Route path="/home-notifications" element={<HomeNotification />} />
           <Route path="/application-status" element={<ApplicationStatus />} />
  

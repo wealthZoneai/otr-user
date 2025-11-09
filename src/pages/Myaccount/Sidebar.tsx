@@ -46,6 +46,9 @@ const SidebarItem: React.FC<MenuItem> = ({ icon, label, path }) => (
 const Sidebar: React.FC = () => {
   const handleLogout = () => {
     console.log("Logout clicked");
+  localStorage.clear();
+
+  window.location.href = "/";
   };
 
   return (

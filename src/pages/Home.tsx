@@ -56,7 +56,7 @@ const Home: React.FC = () => {
       setLoading(true);
       try {
         let response;
-        const categoryParam =
+        // const categoryParam =
           activeCategory === "All India Jobs" ? "" : activeCategory;
 
         switch (activeSubTab) {
