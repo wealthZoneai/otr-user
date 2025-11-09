@@ -80,7 +80,7 @@ const Wallet: React.FC = () => {
   return (
     <div className="bg-gray-50 font-sans antialiased max-w-xl mx-auto shadow-2xl rounded-2xl overflow-hidden min-h-screen">
       {/* Wallet Header Section */}
-      <div className="relative bg-gradient-to-br from-teal-700 to-teal-500 pb-20 rounded-b-3xl shadow-lg">
+      <div className="relative bg-linear-to-br from-teal-700 to-teal-500 pb-20 rounded-b-3xl shadow-lg">
         {/* Header Top */}
         <header className="flex justify-end p-4">
           <button className="flex items-center space-x-1 bg-black/30 text-white text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-black/50 transition-all">
@@ -111,7 +111,7 @@ const Wallet: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <main className="pt-[80px] px-4 pb-10">
+      <main className="pt-80px px-4 pb-10">
         {/* Services Section */}
         <section className="mb-8">
           <h2 className="text-lg font-bold text-gray-800 mb-4">Services</h2>

@@ -7,7 +7,6 @@ import {
   Share2,
   ClipboardList,
   CreditCard,
-  Settings,
   LogOut,
 } from "lucide-react";
 
@@ -52,12 +51,12 @@ const Sidebar: React.FC = () => {
   return (
     <div
       className="
-        fixed left-[10px] top-[72px] 
+        fixed left-10px top-[72px] 
         h-[calc(98vh-64px)] 
         w-[270px] 
-        bg-gradient-to-b from-[#2AB3A9] to-[#045B72] 
+        bg-linear-to-b from-[#2AB3A9] to-[#045B72] 
         text-white rounded-3xl 
-        flex flex-col items-center shadow-2xl overflow-hidden
+        flex flex-col items-center shadow-2xl overflow-hidden 
       "
       style={{ fontFamily: "Inter, sans-serif" }}
     >
@@ -85,7 +84,7 @@ const Sidebar: React.FC = () => {
     flex-1 w-full px-5 mt-4 space-y-2 overflow-y-auto
     [&::-webkit-scrollbar]:hidden
     [-ms-overflow-style:none]
-    [scrollbar-width:none]
+    [scrollbar-width:none] 
   "
 >
         {menuItems.map((item) => (
