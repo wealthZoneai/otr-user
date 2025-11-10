@@ -97,7 +97,7 @@ const FAQPage: React.FC = () => {
       </div>
 
       {/* FAQ Accordion */}
-      <div className="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-8 rounded-xl shadow-lg">
+      <div className="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 bg-gradient-to-r from-[#002366] to-[#00b8d9] p-8 rounded-xl shadow-lg">
         {/* Left: Questions */}
         <div>
           {faqData[activeCategory].map((faq, index) => (
@@ -106,17 +106,17 @@ const FAQPage: React.FC = () => {
                 className="w-full flex justify-between items-center py-3 text-left"
                 onClick={() => toggleAccordion(index)}
               >
-                <span className="text-gray-800 font-medium">
+                <span className="text-white font-medium">
                   {index + 1}. {faq.question}
                 </span>
                 {openIndex === index ? (
-                  <ChevronUp className="text-[#00b8d9]" />
+                  <ChevronUp className="text-[#ffffff]" />
                 ) : (
-                  <ChevronDown className="text-gray-600" />
+                  <ChevronDown className="text-[#ffffff]" />
                 )}
               </button>
               {openIndex === index && (
-                <div className="pb-4 pl-5 pr-2 text-gray-600 text-sm leading-relaxed">
+                <div className="pb-4 pl-5 pr-2 text-[#ffffff] text-sm leading-relaxed">
                   {faq.answer}
                 </div>
               )}
