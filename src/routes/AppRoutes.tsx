@@ -30,10 +30,12 @@ import PaymentPage from "../pages/Payment";
 import PaymentSuccess from "../pages/PaymentSucess";
 import PaymentFailed from "../pages/PaymentFailed";
 import ContactUsPage from "../pages/ContactUsPage";
+import ScrollToTop from "../components/ScrollToTop";
  
 const AppRoutes: React.FC = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop /> {/* Scrolls to top on every route change */}
       <Routes>
         {/* 🌍 Public Routes */}
         <Route path="/" element={<Landing />} />

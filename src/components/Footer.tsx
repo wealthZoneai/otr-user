@@ -8,6 +8,7 @@ import {
   FaPhoneAlt,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import { Link } from "react-router-dom"; // ✅ Import Link for navigation
 
 const Footer: React.FC = () => {
   return (
@@ -31,7 +32,7 @@ const Footer: React.FC = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
         {/* -------- Left Section -------- */}
         <div>
-          <p className="text-sm text-gray-200 leading-relaxed mb-6 ">
+          <p className="text-sm text-gray-200 leading-relaxed mb-6">
             Government Jobs Are A Top Choice For Indian Youth Due To Their
             Security, Good Salaries, Perks, And The Chance To Serve The Nation.
             They Are Accessible To Candidates With Qualifications Ranging From
@@ -77,11 +78,22 @@ const Footer: React.FC = () => {
           <h3 className="text-lg font-semibold mb-2">Company</h3>
           <span className="block w-10 h-[2px] bg-yellow-400 mb-4"></span>
           <ul className="space-y-2 text-gray-200">
-            <li><a href="#" className="hover:text-yellow-400 transition">Home</a></li>
-            <li><a href="#" className="hover:text-yellow-400 transition">About Us</a></li>
-            <li><a href="#" className="hover:text-yellow-400 transition">Services</a></li>
-            <li><a href="#" className="hover:text-yellow-400 transition">FAQ’s</a></li>
-            <li><a href="#" className="hover:text-yellow-400 transition">Contact Us</a></li>
+            {[
+              { label: "Home", to: "/" },
+              { label: "About Us", to: "/about-us" },
+              { label: "Services", to: "/services" },
+              { label: "FAQ’s", to: "/faq" },
+              { label: "Contact Us", to: "/contact" },
+            ].map((item, i) => (
+              <li key={i}>
+                <Link
+                  to={item.to}
+                  className="relative inline-block hover:text-yellow-400 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300 transition-colors"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -90,29 +102,23 @@ const Footer: React.FC = () => {
           <h3 className="text-lg font-semibold mb-2">Terms</h3>
           <span className="block w-10 h-[2px] bg-yellow-400 mb-4"></span>
           <ul className="space-y-2 text-gray-200">
-            <li>
-              <a href="#" className="hover:text-yellow-400 transition">
-                Terms And Conditions
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-yellow-400 transition">
-                Terms Of Acceptable Usage
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-yellow-400 transition">
-                Privacy Policy
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-yellow-400 transition">
-                Cookie Policy
-              </a>
-            </li>
+            {[
+              { label: "Terms And Conditions", to: "/terms" },
+              { label: "Acceptable Usage", to: "/usage" },
+              { label: "Privacy Policy", to: "/privacy" },
+              { label: "Cookie Policy", to: "/cookies" },
+            ].map((item, i) => (
+              <li key={i}>
+                <Link
+                  to={item.to}
+                  className="relative inline-block hover:text-yellow-400 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-yellow-400 hover:after:w-full after:transition-all after:duration-300 transition-colors"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
-        
 
         {/* -------- Contact & Newsletter -------- */}
         <div>
@@ -154,7 +160,6 @@ const Footer: React.FC = () => {
             </div>
           </div>
         </div>
-        
       </div>
 
       {/* Divider Line */}
