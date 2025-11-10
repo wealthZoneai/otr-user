@@ -251,12 +251,64 @@ const SignUpForm: React.FC = () => {
               placeholder="Select Date of Birth"
               formik={formik}
             />
-            <Input
-              icon={FileText}
-              name="qualification"
-              placeholder="Qualification"
-              formik={formik}
-            />
+            {/* Qualification Dropdown */}
+<div>
+  <label className="block text-gray-700 font-medium mb-2 flex items-center gap-1">
+    Qualification <span className="text-red-500">*</span>
+    <div className="group relative cursor-pointer">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-4 h-4 text-gray-500"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
+        />
+      </svg>
+      <div className="absolute left-6 top-1/2 -translate-y-1/2 w-64 text-sm bg-gray-800 text-white rounded-md px-3 py-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 shadow-md">
+        Select your highest qualification
+      </div>
+    </div>
+  </label>
+  <select
+    name="qualification"
+    value={formik.values.qualification}
+    onChange={formik.handleChange}
+    onBlur={formik.handleBlur}
+    className={`w-full border rounded-md px-3 py-3 bg-white text-gray-800 outline-none ${
+      formik.touched.qualification && formik.errors.qualification
+        ? "border-red-500"
+        : "border-gray-300"
+    }`}
+  >
+    <option value="">Select Qualification</option>
+    <option value="12th">12th</option>
+    <option value="Diploma">Diploma</option>
+    <option value="Bachelor's (BA)">Bachelor's (BA)</option>
+    <option value="Bachelor's (BSc)">Bachelor's (BSc)</option>
+    <option value="Bachelor's (BCom)">Bachelor's (BCom)</option>
+    <option value="Bachelor's (BCA)">Bachelor's (BCA)</option>
+    <option value="Bachelor's (BTech)">Bachelor's (BTech)</option>
+    <option value="Master's (MA)">Master's (MA)</option>
+    <option value="Master's (MSc)">Master's (MSc)</option>
+    <option value="Master's (MCom)">Master's (MCom)</option>
+    <option value="Master's (MCA)">Master's (MCA)</option>
+    <option value="Master's (MTech)">Master's (MTech)</option>
+    <option value="MPhil">MPhil</option>
+    <option value="PhD">PhD</option>
+  </select>
+  {formik.touched.qualification && formik.errors.qualification && (
+    <div className="text-red-500 text-xs mt-1">
+      {formik.errors.qualification}
+    </div>
+  )}
+</div>
+
             <Input icon={User} name="state" placeholder="State" formik={formik} />
           </div>
 

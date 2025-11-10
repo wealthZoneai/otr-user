@@ -23,6 +23,7 @@ import ApplicationLayout from "../pages/Myaccount/ApplicationLayout";
 import AdmitCardReleasedPage from "../pages/AdmitCardReleasedPage";
 import ResultPage from "../pages/ResultPage";
 import JobApplication from "../pages/OtrRegistrationSteps/JobApplication";
+import AboutUs from "../pages/AboutUs";
  
 const AppRoutes: React.FC = () => {
   return (
@@ -34,6 +35,7 @@ const AppRoutes: React.FC = () => {
         <Route path="/signup" element={<SignUpForm />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/upcoming-notifications" element={<UpcomingNotificationsPage />} />
+        <Route path="/about-us" element={<AboutUs />} />
  
         {/* 🧍 My Account Section (separate layout) */}
         <Route path="/my-account" element={<MyAccount />} />
