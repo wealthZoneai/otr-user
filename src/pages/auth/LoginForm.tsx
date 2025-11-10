@@ -58,16 +58,19 @@ const UserLoginForm: React.FC = () => {
           password: values.password,
         });
         
-        if (response?.data?.jwtToken) {
-          localStorage.setItem("token", response.data.jwtToken);
+        if (response?.data?.jwt) {
+          localStorage.setItem("token", response.data.jwt);
+          localStorage.setItem("candidateId", response.data.candidateId);
 
           dispatch(
             setUserData({
-              token: response.data.jwtToken,
+              jwt: response.data.jwt,
               userId: response.data.userId,
               userName: response.data.userName,
+              candidateId: response.data.candidateId,
             })
           );
+console.log(response)
 
           toast.success("Login successful!");
           navigate("/home");

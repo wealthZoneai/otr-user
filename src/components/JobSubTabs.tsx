@@ -13,6 +13,7 @@ interface Props {
 }
 
 const SubTabContent: React.FC<Props> = ({ activeSubTab, data }) => {
+  console.log(data)
   if (!activeSubTab) {
     return (
       <div className="space-y-6">

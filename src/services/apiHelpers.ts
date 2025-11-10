@@ -114,7 +114,7 @@ export function uploadResult({
   formData.append("file", file);
 
   return server.post(endpoints.uploadResult, formData, {
-   
+
     requiresAuth: false,
   });
 }
@@ -154,25 +154,39 @@ export async function CreateJobpost(formData: FormData) {
 
 
 
-// ✅ REGISTER USER
 export function registerUser({
-  username,
+  fullName,
+  fatherName,
+  motherName,
   email,
   emailOtp,
   mobile,
   mobileOtp,
+  gender,
+  dateOfBirth,
+  qualification,
+  interest,
   password,
   confirmPassword,
+  termsAccepted,
 }: RegisterUserBody) {
   const body = {
-    username,
+    fullName,
+    fatherName,
+    motherName,
     email,
     emailOtp,
     mobile,
     mobileOtp,
+    gender,
+    dateOfBirth,
+    qualification,
+    interest,
     password,
     confirmPassword,
+    termsAccepted,
   };
+
   return server.post(endpoints.register, body, { requiresAuth: false });
 }
 
@@ -203,7 +217,7 @@ export function verifyMobileOtpApi({ mobile, otp }: VerifyMobileOtpBody) {
 
 // 
 
-export function GetJobNotification(quary:any) {
+export function GetJobNotification(quary: any) {
   return server.get(endpoints.getJobNotification + quary, { requiresAuth: false });
 }
 
@@ -232,3 +246,76 @@ export function GetAllResults() {
 export function GetAllCutOffs() {
   return server.get(endpoints.getAllCutOffs, { requiresAuth: false });
 }
+
+
+export function GetgetCandidateOTRAS({ candidateId }: any) {
+  return server.get(endpoints.getCandidateOTRAS + candidateId, { requiresAuth: false });
+}
+
+// 
+export function createCheckoutSession({
+  amount,
+  productName,
+  successUrl,
+  cancelUrl,
+}: {
+  amount: number;
+  productName: string;
+  successUrl: string;
+  cancelUrl: string;
+}) {
+  // 👇 Send pure JSON, not FormData
+  const payload = {
+    amount,
+    productName,
+    successUrl,
+    cancelUrl,
+  };
+
+  return server.post(endpoints.payment, payload, {
+    requiresAuth: false,
+  });
+}
+
+
+export interface PaymentSuccessPayload {
+  otrId: string;
+  jobPostId: number;
+  vacancyId: number;
+  selectedCenters: string[];
+  livePhoto: File;
+  signature: File;
+}
+
+export function paymentSuccess(payload: {
+  otrId: string;
+  jobPostId: number;
+  vacancyId: number;
+  selectedCenters: string | string[];
+  livePhoto: File;
+  signature: File;
+}) {
+  const formData = new FormData();
+
+  formData.append("otrId", payload.otrId);
+  formData.append("jobPostId", String(payload.jobPostId));
+  formData.append("vacancyId", String(payload.vacancyId));
+
+  // backend expects 'centers' as JSON string
+  formData.append("centers", JSON.stringify(payload.selectedCenters));
+  formData.append("livePhoto", payload.livePhoto);
+  formData.append("signature", payload.signature);
+
+  return server.post("/api/payment/application/submit", formData, {
+  });
+}
+
+export function DownloadAdminCard(otr:any) {
+  return server.get(endpoints.DownloadAdminCard+otr, { requiresAuth: false });
+}
+export function GetuserDataOtr( otr:any) {
+  return server.get(endpoints.getuserDataOtr+otr, { requiresAuth: false });
+}
+
+
+

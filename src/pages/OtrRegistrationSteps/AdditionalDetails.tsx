@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 
 interface AdditionalDetailsProps {
   nextStep: () => void;
   prevStep?: () => void;
+  updateFormData: (data: any) => void;
+  formData: any;
 }
 
 interface AdditionalFormData {
@@ -27,8 +28,14 @@ interface AdditionalFormData {
   currentPincode?: string;
 }
 
-const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevStep }) => {
+const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
+  nextStep,
+  prevStep,
+  updateFormData,
+  formData,
+}) => {
   const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -36,70 +43,58 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
     formState: { errors },
   } = useForm<AdditionalFormData>({
     shouldUnregister: false,
+    defaultValues: formData || {},
   });
 
   const hasCasteCertificate = watch("hasCasteCertificate");
   const hasDisability = watch("hasDisability");
   const sameAddress = watch("sameAddress");
 
-  const onSubmit = async (data: AdditionalFormData) => {
+  const onSubmit = (data: AdditionalFormData) => {
     try {
       setLoading(true);
-      nextStep();
 
-      // Validation passed → API payload
+      // ✅ Build the flat API payload you requested
       const payload = {
-        casteCertificate: {
-          hasCasteCertificate: data.hasCasteCertificate === "Yes",
-          casteCertificateNumber:
-            data.hasCasteCertificate === "Yes" ? data.casteCertificateNumber : null,
-        },
+        casteCertificateIssued: data.hasCasteCertificate === "Yes",
+        casteCertificateNumber:
+          data.hasCasteCertificate === "Yes" ? data.casteCertificateNumber : "",
         nationality: data.nationality,
-        identificationMarks: data.identificationMarks,
-        disability: {
-          hasDisability: data.hasDisability === "Yes",
-          disabilityType: data.hasDisability === "Yes" ? data.disabilityType : null,
-          disabilityCertificateNumber:
-            data.hasDisability === "Yes" ? data.disabilityCertificateNumber : null,
-        },
-        address: {
-          permanent: {
-            address: data.permanentAddress,
-            state: data.permanentState,
-            district: data.permanentDistrict,
-            pincode: data.permanentPincode,
-          },
-          current:
-            data.sameAddress === "Yes"
-              ? {
-                  address: data.permanentAddress,
-                  state: data.permanentState,
-                  district: data.permanentDistrict,
-                  pincode: data.permanentPincode,
-                }
-              : {
-                  address: data.currentAddress,
-                  state: data.currentState,
-                  district: data.currentDistrict,
-                  pincode: data.currentPincode,
-                },
-        },
+        visibleIdentificationMarks: data.identificationMarks,
+        typeOfDisability:
+          data.hasDisability === "Yes" ? data.disabilityType || "" : "",
+        disabilityCertificateNumber:
+          data.hasDisability === "Yes" ? data.disabilityCertificateNumber || "" : "",
+        permanentAddress: data.permanentAddress,
+        permanentState: data.permanentState,
+        permanentDistrict: data.permanentDistrict,
+        permanentPincode: data.permanentPincode,
+        currentAddressSameAsPermanent: data.sameAddress === "Yes",
+        currentAddress:
+          data.sameAddress === "Yes" ? data.permanentAddress : data.currentAddress || "",
+        currentState:
+          data.sameAddress === "Yes" ? data.permanentState : data.currentState || "",
+        currentDistrict:
+          data.sameAddress === "Yes" ? data.permanentDistrict : data.currentDistrict || "",
+        currentPincode:
+          data.sameAddress === "Yes" ? data.permanentPincode : data.currentPincode || "",
       };
 
-      console.log("✅ Sending payload:", payload);
+      console.log("✅ Final Additional Details Payload:", payload);
 
-      await axios.post("http://localhost:8068/api/additionalDetails", payload);
+      // Save to parent
+      updateFormData(payload);
 
-      alert("✅ Additional details saved successfully!");
+      nextStep();
     } catch (error) {
-      console.error("❌ Error submitting additional details:", error);
+      console.error("❌ Error saving additional details:", error);
       alert("Something went wrong while saving additional details.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Helper components
+  // ---------- Helper UI Components ----------
   const FormLabel: React.FC<{ children: React.ReactNode; required?: boolean }> = ({
     children,
     required,
@@ -136,12 +131,13 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
     </select>
   );
 
+  // ---------- JSX ----------
   return (
     <div className="mx-auto max-w-3xl rounded-lg bg-white p-8 shadow-lg border border-gray-100">
       <h2 className="mb-8 text-center text-2xl font-bold text-gray-800">Additional Details</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 text-left">
-        {/* 1️⃣ Caste Certificate */}
+        {/* Caste Certificate */}
         <div>
           <FormLabel required>1. Do you have a caste certificate?</FormLabel>
           <div className="flex gap-6 mt-2">
@@ -190,7 +186,7 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
           )}
         </div>
 
-        {/* 2️⃣ Nationality */}
+        {/* Nationality */}
         <div>
           <FormLabel required>2. Nationality</FormLabel>
           <Select {...register("nationality", { required: "Select nationality" })}>
@@ -201,7 +197,7 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
           <ErrorMsg message={errors.nationality?.message} />
         </div>
 
-        {/* 3️⃣ Identification Marks */}
+        {/* Identification Marks */}
         <div>
           <FormLabel required>3. Visible Identification Marks</FormLabel>
           <Input
@@ -212,7 +208,7 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
           <ErrorMsg message={errors.identificationMarks?.message} />
         </div>
 
-        {/* 4️⃣ Disability */}
+        {/* Disability */}
         <div>
           <FormLabel required>4. Are you a person with benchmark disability (PwBD)?</FormLabel>
           <div className="flex gap-6 mt-2">
@@ -233,22 +229,6 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
           {hasDisability === "Yes" && (
             <div className="pl-6 mt-3 space-y-4 border-l-2 border-pink-100">
               <div>
-                <FormLabel required>a. Type of Disability</FormLabel>
-                <Select
-                  {...register("disabilityType", {
-                    required: "Select disability type",
-                  })}
-                >
-                  <option value="">Select</option>
-                  <option value="Visual Impairment">Visual Impairment</option>
-                  <option value="Hearing Impairment">Hearing Impairment</option>
-                  <option value="Locomotor Disability">Locomotor Disability</option>
-                  <option value="Other">Other</option>
-                </Select>
-                <ErrorMsg message={errors.disabilityType?.message} />
-              </div>
-
-              <div>
                 <FormLabel required>b. Disability Certificate Number</FormLabel>
                 <Input
                   type="text"
@@ -263,7 +243,7 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
           )}
         </div>
 
-        {/* 5️⃣ Permanent Address */}
+        {/* Permanent Address */}
         <div>
           <FormLabel required>5. Permanent Address</FormLabel>
           <TextArea
@@ -276,9 +256,7 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
             <div>
               <FormLabel required>State / UT</FormLabel>
-              <Select
-                {...register("permanentState", { required: "State is required" })}
-              >
+              <Select {...register("permanentState", { required: "State is required" })}>
                 <option value="">Select</option>
                 <option value="Andhra Pradesh">Andhra Pradesh</option>
                 <option value="Telangana">Telangana</option>
@@ -311,11 +289,9 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
           </div>
         </div>
 
-        {/* 6️⃣ Current Address */}
+        {/* Current Address */}
         <div>
-          <FormLabel required>
-            6. Is permanent address same as current address?
-          </FormLabel>
+          <FormLabel required>6. Is permanent address same as current address?</FormLabel>
           <div className="flex gap-6 mt-2">
             {["Yes", "No"].map((option) => (
               <label key={option} className="flex items-center gap-2 text-sm text-gray-700">
@@ -343,9 +319,7 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <FormLabel required>State / UT</FormLabel>
-                  <Select
-                    {...register("currentState", { required: "State is required" })}
-                  >
+                  <Select {...register("currentState", { required: "State is required" })}>
                     <option value="">Select</option>
                     <option value="Andhra Pradesh">Andhra Pradesh</option>
                     <option value="Telangana">Telangana</option>
@@ -358,9 +332,7 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({ nextStep, prevSte
                   <Input
                     type="text"
                     placeholder="Enter district"
-                    {...register("currentDistrict", {
-                      required: "District is required",
-                    })}
+                    {...register("currentDistrict", { required: "District is required" })}
                   />
                   <ErrorMsg message={errors.currentDistrict?.message} />
                 </div>

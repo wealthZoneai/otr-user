@@ -1,29 +1,34 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 
 interface ProfessionalDetailsProps {
   nextStep: () => void;
   prevStep?: () => void;
+  updateFormData: (data: any) => void;
+  formData: any;
 }
 
 interface EducationData {
   educationType: string;
-  board: string;
+  educationBoard: string;
   rollNumber: string;
   yearOfPassing: string;
-  schoolOrCollegeName: string;
+  collegeName: string;
+  percentageValue: string;
+  percentageType: string;
   specialization?: string;
   thesisTitle?: string;
-  percentageType: string;
-  percentageValue: string;
 }
 
 const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
   nextStep,
   prevStep,
+  updateFormData,
+  formData,
 }) => {
-  const [selectedEducation, setSelectedEducation] = useState<string>("");
+  const [selectedEducation, setSelectedEducation] = useState<string>(
+    formData?.educationType || ""
+  );
   const [loading, setLoading] = useState(false);
 
   const {
@@ -33,42 +38,78 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
     setValue,
     formState: { errors },
   } = useForm<EducationData>({
-    defaultValues: {
-      percentageType: "%",
-    },
+    defaultValues: formData || { percentageType: "%" },
   });
 
   const percentageType = watch("percentageType");
 
-  // Submit Handler
-  const onSubmit = async (data: EducationData) => {
-    try {
-      if (!selectedEducation) {
-        alert("Please select an education type!");
-        return;
-      }
-      nextStep();
+  const onSubmit = (data: EducationData) => {
+    if (!selectedEducation) {
+      alert("Please select an education type!");
+      return;
+    }
 
+    try {
       setLoading(true);
 
-      const payload = {
-        educationType: selectedEducation,
-        board: data.board,
-        rollNumber: data.rollNumber,
-        yearOfPassing: data.yearOfPassing,
-        schoolOrCollegeName: data.schoolOrCollegeName,
-        specialization: data.specialization || null,
-        thesisTitle: data.thesisTitle || null,
-        percentageType: data.percentageType,
-        percentageValue: data.percentageValue,
-      };
+      // ✅ Initialize empty object
+      const payload: Record<string, any> = {};
 
-      console.log("✅ Sending payload:", payload);
+      // ✅ Dynamically append only the selected education fields
+      if (selectedEducation === "10th") {
+        payload.matriculationEducationBoard = data.educationBoard;
+        payload.matriculationRollNumber = data.rollNumber;
+        payload.matriculationYearOfPassing = data.yearOfPassing;
+        payload.matriculationSchoolName = data.collegeName;
+        payload.matriculationPercentage =
+          data.percentageType === "%" ? data.percentageValue : "";
+        payload.matriculationCgpa =
+          data.percentageType === "CGPA" ? data.percentageValue : "";
+      }
 
-      // Replace with your real backend URL
-      await axios.post("http://localhost:8068/api/professionalDetails", payload);
+      if (selectedEducation === "12th") {
+        payload.secondaryEducationBoard = data.educationBoard;
+        payload.secondaryRollNumber = data.rollNumber;
+        payload.secondaryYearOfPassing = data.yearOfPassing;
+        payload.secondaryCollegeName = data.collegeName;
+        payload.secondaryPercentage =
+          data.percentageType === "%" ? data.percentageValue : "";
+        payload.secondaryCgpa =
+          data.percentageType === "CGPA" ? data.percentageValue : "";
+      }
 
-      alert("✅ Professional details saved successfully!");
+      if (selectedEducation === "BTech") {
+        payload.graduationEducationBoard = data.educationBoard;
+        payload.graduationRollNumber = data.rollNumber;
+        payload.graduationYearOfPassing = data.yearOfPassing;
+        payload.graduationCollegeName = data.collegeName;
+        payload.graduationPercentage =
+          data.percentageType === "%" ? data.percentageValue : "";
+        payload.graduationCgpa =
+          data.percentageType === "CGPA" ? data.percentageValue : "";
+        payload.specialization = data.specialization || "";
+      }
+
+      if (selectedEducation === "PhD") {
+        payload.phdEducationBoard = data.educationBoard;
+        payload.phdRollNumber = data.rollNumber;
+        payload.phdYearOfPassing = data.yearOfPassing;
+        payload.phdCollegeName = data.collegeName;
+        payload.phdPercentage =
+          data.percentageType === "%" ? data.percentageValue : "";
+        payload.phdCgpa =
+          data.percentageType === "CGPA" ? data.percentageValue : "";
+        payload.thesisTitle = data.thesisTitle || "";
+      }
+
+      // ✅ Log payload (for verification)
+      console.log("✅ Professional Details Payload:", payload);
+
+      // ✅ Save this section’s data to parent form
+      updateFormData(payload);
+
+      // ✅ Move to next step
+      nextStep();
     } catch (error) {
       console.error("❌ Error submitting professional details:", error);
       alert("Failed to save professional details. Please try again.");
@@ -77,7 +118,7 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
     }
   };
 
-  // Helper Components
+  // Helper UI Components
   const FormLabel: React.FC<{ children: React.ReactNode; required?: boolean }> = ({
     children,
     required,
@@ -111,7 +152,6 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
     </select>
   );
 
-  // Year Options (for demo)
   const years = Array.from({ length: 20 }, (_, i) => (2010 + i).toString());
 
   return (
@@ -142,7 +182,6 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
         {/* Dynamic Fields */}
         {selectedEducation && (
           <div className="space-y-6 border-t pt-6">
-            {/* Board */}
             <div>
               <FormLabel required>
                 {selectedEducation === "BTech" || selectedEducation === "PhD"
@@ -152,12 +191,11 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
               <Input
                 type="text"
                 placeholder="Enter Board / University name"
-                {...register("board", { required: "This field is required" })}
+                {...register("educationBoard", { required: "This field is required" })}
               />
-              <ErrorMsg message={errors.board?.message} />
+              <ErrorMsg message={errors.educationBoard?.message} />
             </div>
 
-            {/* Roll Number */}
             <div>
               <FormLabel required>Roll Number</FormLabel>
               <Input
@@ -168,7 +206,6 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
               <ErrorMsg message={errors.rollNumber?.message} />
             </div>
 
-            {/* Year of Passing */}
             <div>
               <FormLabel required>Year of Passing</FormLabel>
               <Select {...register("yearOfPassing", { required: "Select year" })}>
@@ -182,7 +219,6 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
               <ErrorMsg message={errors.yearOfPassing?.message} />
             </div>
 
-            {/* School/College Name */}
             <div>
               <FormLabel required>
                 {selectedEducation === "10th"
@@ -194,14 +230,13 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
               <Input
                 type="text"
                 placeholder="Enter name"
-                {...register("schoolOrCollegeName", {
+                {...register("collegeName", {
                   required: "This field is required",
                 })}
               />
-              <ErrorMsg message={errors.schoolOrCollegeName?.message} />
+              <ErrorMsg message={errors.collegeName?.message} />
             </div>
 
-            {/* Specialization or Thesis */}
             {selectedEducation === "BTech" && (
               <div>
                 <FormLabel required>Specialization</FormLabel>
@@ -230,7 +265,6 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
               </div>
             )}
 
-            {/* Percentage / CGPA */}
             <div>
               <FormLabel required>Result Type</FormLabel>
               <div className="flex items-center gap-6 mt-2">
@@ -266,11 +300,7 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
                   type="number"
                   step="0.01"
                   placeholder={percentageType === "CGPA" ? "e.g. 8.5" : "e.g. 75"}
-                  {...register("percentageValue", {
-                    required: "This field is required",
-                    validate: (val) =>
-                      val !== "" || "Please enter a valid number",
-                  })}
+                  {...register("percentageValue", { required: "This field is required" })}
                 />
                 <ErrorMsg message={errors.percentageValue?.message} />
               </div>
@@ -278,26 +308,24 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
           </div>
         )}
 
-        {/* Buttons */}
         <div className="flex justify-between pt-8">
           {prevStep && (
             <button
               type="button"
               onClick={prevStep}
-              className="rounded-md bg-gradient-to-r from-gray-100 to-gray-200 py-2 px-8 text-lg font-semibold text-gray-700 shadow-sm hover:from-gray-200 hover:to-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200"
+              className="rounded-md bg-gradient-to-r from-gray-100 to-gray-200 py-2 px-8 text-lg font-semibold text-gray-700 shadow-sm hover:from-gray-200 hover:to-gray-300"
             >
               Back
             </button>
           )}
-
           <button
             type="submit"
             disabled={loading}
-            className={`rounded-md ${
+            className={`rounded-md py-2 px-10 text-lg font-semibold text-white shadow-md transition-all duration-200 ${
               loading
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:via-rose-600 hover:to-pink-700"
-            } py-2 px-10 text-lg font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-2 transition-all duration-200`}
+                : "bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:to-pink-700"
+            }`}
           >
             {loading ? "Saving..." : "Next"}
           </button>

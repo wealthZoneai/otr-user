@@ -14,6 +14,7 @@ interface JobCardProps {
   additionalDetails?: string;
   importantDates?: string;
   ageLimit?: string;
+  fee:number,
   vacancyDetails?: any[];
 }
 
@@ -30,6 +31,7 @@ const JobCard: React.FC<JobCardProps> = ({
   importantDates,
   ageLimit,
   vacancyDetails,
+  fee,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -108,6 +110,7 @@ const JobCard: React.FC<JobCardProps> = ({
             importantDates,
             ageLimit,
             vacancyDetails,
+            fee,
           }}
         />
       )}

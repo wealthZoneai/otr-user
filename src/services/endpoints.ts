@@ -1,10 +1,9 @@
-import type { GetJobNotification } from "./apiHelpers"
 
 
 const endpoints = {
 
-    login: 'api/auth/login',
-    register: 'api/auth/register',
+    login: 'api/auth/candidateLogin',
+    register: 'api/auth/candidateSignup',
     sendEmailOtp: 'api/auth/send-email-otp',
     verifyEmailOtp: "api/auth/verify-email-otp",
     sendMobileOtp: "api/auth/send-mobile-otp",
@@ -21,6 +20,11 @@ const endpoints = {
     getAllAnswerKeys: "api/answerkey/getallAnswerKeys",
     getAllResults: "api/result/resultAll",
     getAllCutOffs: "api/cutoff/getAllCutOff",
+    getCandidateOTRAS: "api/candidate/GetProfileByCandidateId?candidateId=",
+    payment: "api/payment/create-checkout-session",
+    paymentSucess: "api/payment/application/submit",
+    DownloadAdminCard: "api/admit-card/get-by-otr?otrId=",
+    getuserDataOtr: "api/admit-card/all-by-candidate?candidateId=",
 
 
 }

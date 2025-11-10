@@ -1,15 +1,23 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 
 interface PersonalDetailsProps {
   nextStep: () => void;
   prevStep?: () => void;
+  updateFormData: (data: any) => void;
+  formData: any;
 }
 
-const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
-  const [aadharChoice, setAadharChoice] = useState<"Yes" | "No" | null>(null);
-  const [changedNameChoice, setChangedNameChoice] = useState<"Yes" | "No" | null>(null);
+const PersonalDetails: React.FC<PersonalDetailsProps> = ({
+  nextStep,
+  prevStep,
+  updateFormData,
+  formData,
+}) => {
+
+  const [changedNameChoice, setChangedNameChoice] = useState<"Yes" | "No" | null>(
+    formData?.changedName ? "Yes" : null
+  );
   const [loading, setLoading] = useState(false);
 
   const {
@@ -17,43 +25,44 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: formData || {},
+  });
 
- const onSubmit = async (data: any) => {
-  try {
-    setLoading(true);
+  const onSubmit = async (data: any) => {
+    try {
+      setLoading(true);
 
-    // API payload if needed
-    const payload = {
-      hasAadhar: aadharChoice === "Yes",
-      aadharNumber: data.aadharNumber,
-      idType: data.idType,
-      idNumber: data.idNumber,
-      candidateName: data.candidateName,
-      newName: changedNameChoice === "Yes" ? data.newName : null,
-      gender: data.gender,
-      dob: data.dob,
-      fatherName: data.fatherName,
-      motherName: data.motherName,
-      mobile: data.mobile,
-      email: data.email,
-    };
+      // Prepare data payload
+      const payload = {
+        aadharCardNumber: data.aadharCardNumber,
+        candidateName: data.candidateName,
+        identificationCard: data.identificationCard,
+        identificationCardNumber: data.identificationCardNumber,
+        nameChanged: changedNameChoice === "Yes",
+        changedName: changedNameChoice === "Yes" ? data.changedName : null,
+        gender: data.gender,
+        dateOfBirth: data.dateOfBirth,
+        fathersName: data.fathersName,
+        mothersName: data.mothersName,
+      };
 
-    // ✅ Only move to next step *after* validation success
-    // await axios.post("http://localhost:8068/api/personalDetails", payload);
-    console.log("✅ Personal details saved:", payload);
+      console.log("✅ Personal details saved:", payload);
 
-    nextStep(); // move to step 2
-  } catch (error) {
-    console.error("❌ Error:", error);
-    alert("Something went wrong!");
-  } finally {
-    setLoading(false);
-  }
-};
+      // Save in parent (JobApplication)
+      updateFormData(payload);
 
+      // Move to next step
+      nextStep();
+    } catch (error) {
+      console.error("❌ Error:", error);
+      alert("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // helper components
+  // Helper UI components
   const FormLabel: React.FC<{ children: React.ReactNode; required?: boolean }> = ({
     children,
     required,
@@ -75,8 +84,8 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-left">
         {/* Aadhar Choice */}
-        <div>
-          <FormLabel required>1. Do you have an Aadhar card?</FormLabel>
+        {/* <div>
+          <FormLabel required>Do you have an Aadhar card?</FormLabel>
           <div className="mt-2 flex gap-6">
             {["Yes", "No"].map((option) => (
               <label key={option} className="flex items-center space-x-2 text-sm text-gray-700">
@@ -91,28 +100,30 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
               </label>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Aadhar Fields */}
-        {aadharChoice === "Yes" && (
-          <div className="pl-6 mt-3 space-y-4 border-l-2 border-pink-100">
-            <div>
-              <FormLabel required>Aadhar Card Number</FormLabel>
-              <input
-                type="number"
-                {...register("aadharNumber", {
-                  required: "Aadhar number is required",
-                  pattern: {
-                    value: /^\d{12}$/,
-                    message: "Aadhar number must be 12 digits",
-                  },
-                })}
-                placeholder="Enter Aadhar number"
-                className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
-              />
-              <ErrorMsg message={errors.aadharNumber?.message as string} />
-            </div>
-            <div>
+        {/* {aadharChoice === "Yes" && ( */}
+        <div className="pl-6 mt-3 space-y-4 border-l-2 border-pink-100">
+          <div>
+            <FormLabel required>Aadhar Card Number</FormLabel>
+            <input
+              type="text"
+              {...register("aadharCardNumber", {
+                required: "Aadhar number is required",
+                pattern: {
+                  value: /^\d{12}$/,
+                  message: "Aadhar number must be 12 digits",
+                },
+              })}
+              placeholder="Enter Aadhar number"
+              maxLength={12}
+              className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
+            />
+            <ErrorMsg message={errors.aadharCardNumber?.message as string} />
+          </div>
+        </div>
+        {/* <div>
               <FormLabel required>Verify Aadhar Number</FormLabel>
               <input
                 type="number"
@@ -125,37 +136,38 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
               />
               <ErrorMsg message={errors.verifyAadharNumber?.message as string} />
             </div>
-          </div>
-        )}
+          </div> */}
+        {/* )} */}
 
         {/* Alternate ID Fields */}
-        {aadharChoice === "No" && (
+        {/* {aadharChoice === "No" && ( */}
           <div className="pl-6 mt-3 space-y-4 border-l-2 border-pink-100">
             <div>
               <FormLabel required>Type of Identification Card</FormLabel>
               <select
-                {...register("idType", { required: "Please select ID type" })}
+                {...register("identificationCard", { required: "Please select ID type" })}
                 className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
               >
                 <option value="">Select</option>
-                <option value="pan">PAN Card</option>
-                <option value="passport">Passport</option>
-                <option value="driving_license">Driving License</option>
+                <option value="PAN">PAN Card</option>
+                <option value="Passport">Passport</option>
+                <option value="Driving License">Driving License</option>
               </select>
-              <ErrorMsg message={errors.idType?.message as string} />
+              <ErrorMsg message={errors.identificationCard?.message as string} />
             </div>
             <div>
               <FormLabel required>Identification Card Number</FormLabel>
               <input
                 type="text"
-                {...register("idNumber", { required: "ID number is required" })}
+                {...register("identificationCardNumber", { required: "ID number is required" })}
                 placeholder="Enter ID number"
+                maxLength={10}
                 className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
               />
-              <ErrorMsg message={errors.idNumber?.message as string} />
+              <ErrorMsg message={errors.identificationCardNumber?.message as string} />
             </div>
           </div>
-        )}
+        {/* )} */}
 
         {/* Candidate Name */}
         <div>
@@ -174,7 +186,7 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
           <FormLabel required>Have you ever changed your name?</FormLabel>
           <div className="mt-2 flex gap-6">
             {["Yes", "No"].map((option) => (
-              <label key={option} className="flex items-center space-x-2 text-sm text-gray-700">
+              <label key={option } className="flex items-center space-x-2 text-sm text-gray-700">
                 <input
                   type="radio"
                   checked={changedNameChoice === option}
@@ -193,11 +205,11 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
               <FormLabel required>New/Changed Name</FormLabel>
               <input
                 type="text"
-                {...register("newName", { required: "Please enter new name" })}
+                {...register("changedName", { required: "Please enter new name" })}
                 placeholder="Enter new name"
                 className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
               />
-              <ErrorMsg message={errors.newName?.message as string} />
+              <ErrorMsg message={errors.changedName?.message as string} />
             </div>
             <div>
               <FormLabel required>Verify New/Changed Name</FormLabel>
@@ -205,7 +217,7 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
                 type="text"
                 {...register("verifyNewName", {
                   validate: (val) =>
-                    val === watch("newName") || "Names do not match",
+                    val === watch("changedName") || "Names do not match",
                 })}
                 placeholder="Re-enter name"
                 className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
@@ -224,38 +236,22 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
               className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
             >
               <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+              <option value="O">Other</option>
             </select>
             <ErrorMsg message={errors.gender?.message as string} />
           </div>
-          <div>
-            <FormLabel required>Verify Gender</FormLabel>
-            <select
-              {...register("verifyGender", {
-                validate: (val) => val === watch("gender") || "Gender mismatch",
-              })}
-              className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
-            >
-              <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-            <ErrorMsg message={errors.verifyGender?.message as string} />
-          </div>
-        </div>
 
-        {/* Date of Birth */}
-        <div>
-          <FormLabel required>Date of Birth</FormLabel>
-          <input
-            type="date"
-            {...register("dob", { required: "Please select date of birth" })}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
-          />
-          <ErrorMsg message={errors.dob?.message as string} />
+          <div>
+            <FormLabel required>Date of Birth</FormLabel>
+            <input
+              type="date"
+              {...register("dateOfBirth", { required: "Please select date of birth" })}
+              className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
+            />
+            <ErrorMsg message={errors.dateOfBirth?.message as string} />
+          </div>
         </div>
 
         {/* Parents */}
@@ -264,70 +260,60 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ nextStep }) => {
             <FormLabel required>Father's Name</FormLabel>
             <input
               type="text"
-              {...register("fatherName", { required: "Father's name is required" })}
+              {...register("fathersName", { required: "Father's name is required" })}
               placeholder="Enter father's name"
               className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
             />
-            <ErrorMsg message={errors.fatherName?.message as string} />
+            <ErrorMsg message={errors.fathersName?.message as string} />
           </div>
           <div>
             <FormLabel required>Mother's Name</FormLabel>
             <input
               type="text"
-              {...register("motherName", { required: "Mother's name is required" })}
+              {...register("mothersName", { required: "Mother's name is required" })}
               placeholder="Enter mother's name"
               className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
             />
-            <ErrorMsg message={errors.motherName?.message as string} />
+            <ErrorMsg message={errors.mothersName?.message as string} />
           </div>
         </div>
 
-        {/* Contact Info */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <FormLabel required>Mobile Number</FormLabel>
-            <input
-              type="tel"
-              {...register("mobile", {
-                required: "Mobile number is required",
-                pattern: {
-                  value: /^[6-9]\d{9}$/,
-                  message: "Invalid mobile number",
-                },
-              })}
-              placeholder="Enter mobile number"
-              className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
-            />
-            <ErrorMsg message={errors.mobile?.message as string} />
-          </div>
-          <div>
-            <FormLabel required>Email ID</FormLabel>
-            <input
-              type="email"
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Invalid email format",
-                },
-              })}
-              placeholder="Enter email"
-              className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
-            />
-            <ErrorMsg message={errors.email?.message as string} />
-          </div>
-        </div>
+        {/* Email */}
+        {/* <div>
+          <FormLabel required>Email ID</FormLabel>
+          <input
+            type="email"
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Invalid email format",
+              },
+            })}
+            placeholder="Enter email"
+            className="w-full border rounded-md px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"
+          />
+          <ErrorMsg message={errors.email?.message as string} />
+        </div> */}
 
         {/* Submit */}
-        <div className="pt-8 text-center">
+        <div className="pt-8 text-center flex justify-between">
+          {prevStep && (
+            <button
+              type="button"
+              onClick={prevStep}
+              className="bg-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-400 transition"
+            >
+              Back
+            </button>
+          )}
           <button
             type="submit"
             disabled={loading}
-            className={`rounded-md ${
-              loading
+            className={`rounded-md ${loading
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:via-rose-600 hover:to-pink-700"
-            } py-2 px-10 text-lg font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-2 transition-all duration-200`}
+              } py-2 px-10 text-lg font-semibold text-white shadow-md transition-all duration-200`}
           >
             {loading ? "Saving..." : "Next"}
           </button>

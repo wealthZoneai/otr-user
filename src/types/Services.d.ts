@@ -10,13 +10,20 @@ interface Syllabus {
 }
 
  interface RegisterUserBody {
-  username: string;
+  fullName: string;
+  fatherName: string;
+  motherName: string;
   email: string;
   emailOtp: string;
   mobile: string;
   mobileOtp: string;
+  gender: string;
+  dateOfBirth: string;
+  qualification: string;
+  interest: string;
   password: string;
   confirmPassword: string;
+  termsAccepted: boolean;
 }
 
  interface SendEmailOtpBody {

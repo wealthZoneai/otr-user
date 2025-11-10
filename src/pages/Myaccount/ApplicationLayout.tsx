@@ -7,13 +7,8 @@ import Refer from "./Refer";
 import Support from "./Support";
 import Wallet from "./Wallet";
 import HomeNavbar from "../../components/HomeNavbar";
-
-import Jobs from "./jobs";
-
-// Placeholder components
-const OTRForm: React.FC = () => (
-  <div className="p-4 text-center text-xl font-semibold">OTR Form Content</div>
-);
+import Jobs from "./Jobs";
+import OtrForm from "./OtrForm";
 
 const ApplicationLayout: React.FC = () => {
   return (
@@ -21,37 +16,34 @@ const ApplicationLayout: React.FC = () => {
       {/* 🔝 Top Navbar */}
       <HomeNavbar />
 
-      {/* ⚙️ Main Flex Layout */}
-      <div className="flex pt-16 bg-gray-100 min-h-screen overflow-hidden">
-        {/* 📂 Sidebar */}
-        <div className="w-[260px] p-2 ">
+      {/* ⚙️ Main Layout */}
+      <div className="flex pt-16 bg-gray-100 min-h-screen">
+        {/* 📂 Sidebar Section */}
+        <div className="w-[270px] fixed top-[72px] p-2 left-0 h-[calc(100vh-72px)] z-20">
           <Sidebar />
         </div>
 
         {/* 📄 Content Area */}
-        <div className="flex-1 bg-gray-50 overflow-y-auto rounded-tl-3xl shadow-inner p-6">
-        
-
-          {/* Routes */}
+        <div className="flex-1 ml-[290px] bg-gray-50 p-6 rounded-tl-3xl transition-all">
           <main>
             <Routes>
-              {/* Default route */}
-              <Route path="/" element={<Navigate to="Wallet" replace />} />
+              {/* ✅ Default route – Redirect to Wallet */}
+<Route path="Myaccount/Wallet" element={<Navigate to="/" replace />} />
 
-              {/* Page Routes */}
+              {/* 🧾 Pages */}
               <Route path="Wallet" element={<Wallet />} />
-              <Route path="otr-form" element={<OTRForm />} />
+              <Route path="otr-form" element={<OtrForm />} />
               <Route path="MyAccountPQP" element={<MyAccountPQP />} />
               <Route path="SavedJobs" element={<Jobs />} />
               <Route path="Refer" element={<Refer />} />
               <Route path="Support" element={<Support />} />
               <Route path="Settings" element={<Settings />} />
 
-              {/* 404 Fallback */}
+              {/* 🚫 404 Fallback */}
               <Route
                 path="*"
                 element={
-                  <div className="text-center p-10 text-gray-500">
+                  <div className="text-center p-10 text-gray-500 text-lg font-medium">
                     404 – Page Not Found
                   </div>
                 }
